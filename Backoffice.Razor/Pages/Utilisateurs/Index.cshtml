@@ -1,0 +1,150 @@
+@page
+@model Backoffice.Razor.Pages.Utilisateurs.IndexModel
+@{
+    ViewData["Title"] = "Gestion des utilisateurs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><i class="bi bi-people"></i> Gestion des utilisateurs</h4>
+    <a href="/Utilisateurs/Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nouvel utilisateur
+    </a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher (nom, email, téléphone)..." value="@Model.Search">
+            </div>
+            <div class="col-md-3">
+                <select name="statut" class="form-select">
+                    <option value="">Tous les statuts</option>
+                    <option value="Actif" selected="@(Model.Statut == "Actif")">Actif</option>
+                    <option value="Bloque" selected="@(Model.Statut == "Bloque")">Bloqué</option>
+                    <option value="Inactif" selected="@(Model.Statut == "Inactif")">Inactif</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i> Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Contact</th>
+                    <th>Inscription</th>
+                    <th>Emprunts</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Utilisateurs)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                    <span class="text-white fw-bold">@user.Nom[0]@user.Prenom[0]</span>
+                                </div>
+                                <div>
+                                    <strong>@user.Nom @user.Prenom</strong>
+                                    <br><small class="text-muted">@user.NumeroAbonne</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <small>
+                                <i class="bi bi-envelope"></i> @user.Email<br>
+                                @if (!string.IsNullOrEmpty(user.Telephone))
+                                {
+                                    <i class="bi bi-telephone"></i> @user.Telephone
+                                }
+                            </small>
+                        </td>
+                        <td>@user.DateInscription.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <span class="badge bg-info">@user.EmpruntsEnCours en cours</span>
+                            @if (user.EmpruntsEnRetard > 0)
+                            {
+                                <span class="badge bg-danger">@user.EmpruntsEnRetard en retard</span>
+                            }
+                        </td>
+                        <td>
+                            @{
+                                var badgeClass = user.Statut switch
+                                {
+                                    "Actif" => "bg-success",
+                                    "Bloque" => "bg-danger",
+                                    _ => "bg-secondary"
+                                };
+                            }
+                            <span class="badge @badgeClass">@user.Statut</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="/Utilisateurs/Details/@user.IdUtilisateur" class="btn btn-outline-info" title="Détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/Utilisateurs/Edit/@user.IdUtilisateur" class="btn btn-outline-primary" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                @if (user.Statut == "Actif")
+                                {
+                                    <a href="/Utilisateurs/Block/@user.IdUtilisateur" class="btn btn-outline-warning" title="Bloquer">
+                                        <i class="bi bi-lock"></i>
+                                    </a>
+                                }
+                                else if (user.Statut == "Bloque")
+                                {
+                                    <a href="/Utilisateurs/Unblock/@user.IdUtilisateur" class="btn btn-outline-success" title="Débloquer">
+                                        <i class="bi bi-unlock"></i>
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Utilisateurs.Any())
+    {
+        <div class="card-body">
+            <div class="alert alert-info mb-0 text-center">
+                <i class="bi bi-info-circle"></i> Aucun utilisateur trouvé.
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Pagination -->
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.CurrentPage - 1)&search=@Model.Search&statut=@Model.Statut">Précédent</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?page=@i&search=@Model.Search&statut=@Model.Statut">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.CurrentPage + 1)&search=@Model.Search&statut=@Model.Statut">Suivant</a>
+            </li>
+        </ul>
+    </nav>
+}

@@ -1,0 +1,101 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Categories.DetailsModel
+@{
+    ViewData["Title"] = "Détails de la catégorie";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header" style="background-color: @Model.Categorie?.Couleur; color: white;">
+                <i class="bi bi-tag"></i> @Model.Categorie?.Nom
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.Categorie?.Description))
+                {
+                    <p>@Model.Categorie.Description</p>
+                }
+                else
+                {
+                    <p class="text-muted fst-italic">Aucune description</p>
+                }
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Nombre de livres</span>
+                    <strong>@Model.Livres.Count</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Couleur</span>
+                    <span class="badge" style="background-color: @Model.Categorie?.Couleur">@Model.Categorie?.Couleur</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <a href="/Categories/Edit/@Model.Categorie?.IdCategorie" class="btn btn-primary btn-sm">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a href="/Categories/Delete/@Model.Categorie?.IdCategorie" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash"></i> Supprimer
+            </a>
+            <a href="/Categories/Index" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-book"></i> Livres dans cette catégorie (@Model.Livres.Count)
+            </div>
+            <div class="card-body">
+                @if (Model.Livres.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th>Année</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var livre in Model.Livres)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="/Livres/Details/@livre.IdLivre">@livre.Titre</a>
+                                        </td>
+                                        <td>@livre.Auteur?.NomComplet</td>
+                                        <td>@livre.Annee</td>
+                                        <td>
+                                            <span class="badge @(livre.StockDisponible > 0 ? "bg-success" : "bg-danger")">
+                                                @livre.StockDisponible / @livre.Stock
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/Livres/Edit/@livre.IdLivre" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle"></i> Aucun livre dans cette catégorie.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

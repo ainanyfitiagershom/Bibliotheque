@@ -1,0 +1,77 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Emprunts.RetourModel
+@{
+    ViewData["Title"] = "Enregistrer le retour";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-check-circle"></i> Enregistrer le retour
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>Informations de l'emprunt</h5>
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>Livre</strong></td>
+                            <td>@Model.Emprunt?.Livre?.Titre</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Emprunteur</strong></td>
+                            <td>@Model.Emprunt?.Utilisateur?.Nom @Model.Emprunt?.Utilisateur?.Prenom</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date d'emprunt</strong></td>
+                            <td>@Model.Emprunt?.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retour prévu</strong></td>
+                            <td>@Model.Emprunt?.DateRetourPrevue.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Statut actuel</strong></td>
+                            <td>
+                                @{
+                                    var badgeClass = Model.Emprunt?.Statut switch
+                                    {
+                                        "EnCours" => "bg-primary",
+                                        "EnRetard" => "bg-danger",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@Model.Emprunt?.Statut</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                @if (Model.Emprunt?.Statut == "EnRetard")
+                {
+                    var joursRetard = (DateTime.Today - Model.Emprunt.DateRetourPrevue).Days;
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Retard de @joursRetard jour(s)</strong>
+                    </div>
+                }
+
+                <form method="post">
+                    <input type="hidden" name="id" value="@Model.Emprunt?.IdEmprunt" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Date de retour</label>
+                        <input type="date" name="dateRetour" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" required>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> Confirmer le retour
+                        </button>
+                        <a href="/Emprunts/Index" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

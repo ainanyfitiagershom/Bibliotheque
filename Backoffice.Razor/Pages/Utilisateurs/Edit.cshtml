@@ -1,0 +1,83 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Utilisateurs.EditModel
+@{
+    ViewData["Title"] = "Modifier l'utilisateur";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pencil"></i> Modifier : @Model.Input.Nom @Model.Input.Prenom
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="Input.IdUtilisateur" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Nom" class="form-label"></label>
+                            <input asp-for="Input.Nom" class="form-control" required>
+                            <span asp-validation-for="Input.Nom" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Prenom" class="form-label"></label>
+                            <input asp-for="Input.Prenom" class="form-control" required>
+                            <span asp-validation-for="Input.Prenom" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input asp-for="Input.Email" type="email" class="form-control" required>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Telephone" class="form-label"></label>
+                            <input asp-for="Input.Telephone" class="form-control">
+                            <span asp-validation-for="Input.Telephone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Adresse" class="form-label"></label>
+                        <textarea asp-for="Input.Adresse" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Input.Adresse" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.DateNaissance" class="form-label"></label>
+                            <input asp-for="Input.DateNaissance" type="date" class="form-control">
+                            <span asp-validation-for="Input.DateNaissance" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Statut" class="form-label"></label>
+                            <select asp-for="Input.Statut" class="form-select">
+                                <option value="Actif">Actif</option>
+                                <option value="Bloque">Bloqué</option>
+                                <option value="Inactif">Inactif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                        <input type="password" name="NouveauMotDePasse" class="form-control">
+                        <small class="text-muted">Minimum 6 caractères si renseigné</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Enregistrer
+                        </button>
+                        <a href="/Utilisateurs/Details/@Model.Input.IdUtilisateur" class="btn btn-outline-info">Voir le profil</a>
+                        <a href="/Utilisateurs/Index" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

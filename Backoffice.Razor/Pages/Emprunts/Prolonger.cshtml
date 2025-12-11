@@ -1,0 +1,73 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Emprunts.ProlongerModel
+@{
+    ViewData["Title"] = "Prolonger l'emprunt";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-calendar-plus"></i> Prolonger l'emprunt
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>Informations de l'emprunt</h5>
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>Livre</strong></td>
+                            <td>@Model.Emprunt?.Livre?.Titre</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Emprunteur</strong></td>
+                            <td>@Model.Emprunt?.Utilisateur?.Nom @Model.Emprunt?.Utilisateur?.Prenom</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date d'emprunt</strong></td>
+                            <td>@Model.Emprunt?.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retour prévu actuel</strong></td>
+                            <td>@Model.Emprunt?.DateRetourPrevue.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prolongations utilisées</strong></td>
+                            <td>@Model.Emprunt?.NombreProlongations / 2</td>
+                        </tr>
+                    </table>
+                </div>
+
+                @if (Model.Emprunt?.NombreProlongations >= 2)
+                {
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle"></i>
+                        Nombre maximum de prolongations atteint (2).
+                    </div>
+                }
+                else if (Model.HasReservation)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Ce livre a des réservations en attente. La prolongation n'est pas possible.
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        La prolongation ajoutera <strong>7 jours</strong> à la date de retour prévue.
+                        <br>Nouvelle date de retour : <strong>@Model.Emprunt?.DateRetourPrevue.AddDays(7).ToString("dd/MM/yyyy")</strong>
+                    </div>
+
+                    <form method="post" class="d-flex gap-2">
+                        <input type="hidden" name="id" value="@Model.Emprunt?.IdEmprunt" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-calendar-plus"></i> Confirmer la prolongation
+                        </button>
+                        <a href="/Emprunts/Index" class="btn btn-outline-secondary">Annuler</a>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

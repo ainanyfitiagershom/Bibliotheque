@@ -1,0 +1,166 @@
+@page
+@model Backoffice.Razor.Pages.Livres.IndexModel
+@{
+    ViewData["Title"] = "Gestion des Livres";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-0">Liste des livres</h4>
+        <small class="text-muted">@Model.TotalItems livres trouvés</small>
+    </div>
+    <a href="/Livres/Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Ajouter un livre
+    </a>
+</div>
+
+<!-- Filtres -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="recherche" value="@Model.Recherche" placeholder="Rechercher (titre, auteur, ISBN...)">
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="idCategorie">
+                    <option value="">Toutes catégories</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <option value="@cat.IdCategorie" selected="@(Model.IdCategorie == cat.IdCategorie)">@cat.Nom</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="disponible">
+                    <option value="">Disponibilité</option>
+                    <option value="true" selected="@(Model.Disponible == true)">Disponibles</option>
+                    <option value="false" selected="@(Model.Disponible == false)">Indisponibles</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="tri">
+                    <option value="Titre" selected="@(Model.Tri == "Titre")">Titre</option>
+                    <option value="Recent" selected="@(Model.Tri == "Recent")">Plus récents</option>
+                    <option value="Popularite" selected="@(Model.Tri == "Popularite")">Popularité</option>
+                    <option value="Note" selected="@(Model.Tri == "Note")">Meilleure note</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i> Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des livres -->
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 50px;"></th>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Catégories</th>
+                    <th>Année</th>
+                    <th class="text-center">Stock</th>
+                    <th class="text-center">Note</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var livre in Model.Livres)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(livre.ImageCouverture))
+                            {
+                                <img src="@livre.ImageCouverture" alt="" style="width: 40px; height: 50px; object-fit: cover; border-radius: 4px;">
+                            }
+                            else
+                            {
+                                <div class="bg-light text-center" style="width: 40px; height: 50px; border-radius: 4px; line-height: 50px;">
+                                    <i class="bi bi-book text-muted"></i>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <strong>@livre.Titre</strong>
+                            @if (!string.IsNullOrEmpty(livre.ISBN))
+                            {
+                                <br><small class="text-muted">ISBN: @livre.ISBN</small>
+                            }
+                        </td>
+                        <td>@livre.AuteurNom</td>
+                        <td>
+                            @foreach (var cat in livre.Categories.Take(2))
+                            {
+                                <span class="badge bg-secondary me-1">@cat</span>
+                            }
+                            @if (livre.Categories.Count > 2)
+                            {
+                                <span class="badge bg-light text-dark">+@(livre.Categories.Count - 2)</span>
+                            }
+                        </td>
+                        <td>@livre.Annee</td>
+                        <td class="text-center">
+                            <span class="badge @(livre.StockDisponible > 0 ? "bg-success" : "bg-danger")">
+                                @livre.StockDisponible / @livre.Stock
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            @if (livre.NoteMoyenne > 0)
+                            {
+                                <span class="text-warning">
+                                    <i class="bi bi-star-fill"></i> @livre.NoteMoyenne.ToString("0.0")
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a href="/Livres/Details/@livre.IdLivre" class="btn btn-sm btn-outline-info" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="/Livres/Edit/@livre.IdLivre" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="/Livres/Delete/@livre.IdLivre" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.Page - 1)&recherche=@Model.Recherche&idCategorie=@Model.IdCategorie&disponible=@Model.Disponible&tri=@Model.Tri">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link" href="?page=@i&recherche=@Model.Recherche&idCategorie=@Model.IdCategorie&disponible=@Model.Disponible&tri=@Model.Tri">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.Page + 1)&recherche=@Model.Recherche&idCategorie=@Model.IdCategorie&disponible=@Model.Disponible&tri=@Model.Tri">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

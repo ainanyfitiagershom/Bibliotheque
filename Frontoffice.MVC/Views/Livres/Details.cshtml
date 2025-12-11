@@ -1,0 +1,214 @@
+@model LivreDetailsViewModel
+@{
+    ViewData["Title"] = Model.Livre.Titre;
+}
+
+<div class="container section-elegant">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-elegant">
+        <a href="/"><i class="bi bi-house-heart"></i> Accueil</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="/Livres">Catalogue</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>@(Model.Livre.Titre.Length > 30 ? Model.Livre.Titre.Substring(0, 30) + "..." : Model.Livre.Titre)</span>
+    </div>
+
+    <div class="book-detail-elegant">
+        <!-- Cover Section -->
+        <div class="book-detail-cover-elegant">
+            <div class="cover-wrapper-elegant">
+                @if (!string.IsNullOrEmpty(Model.Livre.ImageCouverture))
+                {
+                    <img src="@Model.Livre.ImageCouverture" alt="@Model.Livre.Titre">
+                }
+                else
+                {
+                    <div class="book-cover-placeholder-elegant large">
+                        <i class="bi bi-book"></i>
+                    </div>
+                }
+            </div>
+
+            <!-- Availability Card -->
+            <div class="availability-card-elegant">
+                <div class="availability-header-elegant">
+                    @if (Model.Livre.StockDisponible > 0)
+                    {
+                        <span class="status-indicator-elegant available">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+                        <div>
+                            <strong>Disponible</strong>
+                            <span class="stock-count-elegant">@Model.Livre.StockDisponible exemplaire(s)</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="status-indicator-elegant unavailable">
+                            <i class="bi bi-clock-fill"></i>
+                        </span>
+                        <div>
+                            <strong>Indisponible</strong>
+                            @if (Model.PositionFileAttente > 0)
+                            {
+                                <span class="queue-count-elegant">@Model.PositionFileAttente personne(s) en attente</span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @if (Model.Livre.StockDisponible > 0)
+                {
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <p class="availability-note-elegant">
+                            <i class="bi bi-info-circle"></i>
+                            Présentez-vous à la bibliothèque pour emprunter ce livre.
+                        </p>
+                    }
+                    else
+                    {
+                        <a href="/Compte/Login" class="btn-elegant btn-primary-elegant w-100">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Se connecter pour emprunter
+                        </a>
+                    }
+                }
+                else
+                {
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-controller="Reservations" asp-action="Reserver" method="post">
+                            <input type="hidden" name="livreId" value="@Model.Livre.IdLivre" />
+                            <button type="submit" class="btn-elegant btn-secondary-elegant w-100">
+                                <i class="bi bi-bookmark-heart"></i>
+                                Réserver ce livre
+                            </button>
+                        </form>
+                        <p class="availability-note-elegant">
+                            <i class="bi bi-bell"></i>
+                            Vous serez notifiée lorsque le livre sera disponible.
+                        </p>
+                    }
+                    else
+                    {
+                        <a href="/Compte/Login" class="btn-elegant btn-secondary-elegant w-100">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Se connecter pour réserver
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Book Info Section -->
+        <div class="book-detail-info-elegant">
+            <h1 class="book-title-detail-elegant">@Model.Livre.Titre</h1>
+
+            <a href="/Livres?search=@Model.Livre.NomAuteur" class="book-author-detail-elegant">
+                <i class="bi bi-pen"></i> @Model.Livre.NomAuteur
+            </a>
+
+            @if (Model.Livre.NoteMoyenne > 0)
+            {
+                <div class="book-rating-detail-elegant">
+                    <div class="rating-stars-elegant">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Model.Livre.NoteMoyenne)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            else if (i - 0.5m <= Model.Livre.NoteMoyenne)
+                            {
+                                <i class="bi bi-star-half"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+                        }
+                    </div>
+                    <span class="rating-text-elegant">
+                        @Model.Livre.NoteMoyenne.ToString("0.0") (@Model.Livre.NombreAvis avis)
+                    </span>
+                </div>
+            }
+
+            <!-- Meta Info -->
+            <div class="book-meta-elegant">
+                @if (Model.Livre.Annee.HasValue)
+                {
+                    <div class="meta-item-elegant">
+                        <i class="bi bi-calendar-heart"></i>
+                        <div>
+                            <span class="meta-value-elegant">@Model.Livre.Annee</span>
+                            <span class="meta-label-elegant">Année</span>
+                        </div>
+                    </div>
+                }
+                @if (Model.Livre.NombrePages.HasValue)
+                {
+                    <div class="meta-item-elegant">
+                        <i class="bi bi-file-text"></i>
+                        <div>
+                            <span class="meta-value-elegant">@Model.Livre.NombrePages</span>
+                            <span class="meta-label-elegant">Pages</span>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Livre.Langue))
+                {
+                    <div class="meta-item-elegant">
+                        <i class="bi bi-translate"></i>
+                        <div>
+                            <span class="meta-value-elegant">@Model.Livre.Langue</span>
+                            <span class="meta-label-elegant">Langue</span>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Livre.Editeur))
+                {
+                    <div class="meta-item-elegant">
+                        <i class="bi bi-building"></i>
+                        <div>
+                            <span class="meta-value-elegant">@Model.Livre.Editeur</span>
+                            <span class="meta-label-elegant">Éditeur</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Categories -->
+            @if (Model.Livre.Categories?.Any() == true)
+            {
+                <div class="book-categories-detail-elegant">
+                    @foreach (var cat in Model.Livre.Categories)
+                    {
+                        <a href="/Livres?categorieId=@cat.IdCategorie" class="category-pill-elegant" style="background: linear-gradient(135deg, @cat.Couleur, @cat.Couleur);">
+                            @cat.Nom
+                        </a>
+                    }
+                </div>
+            }
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Livre.Description))
+            {
+                <div class="book-description-elegant">
+                    <h3><i class="bi bi-text-paragraph"></i> Description</h3>
+                    <p>@Model.Livre.Description</p>
+                </div>
+            }
+
+            <!-- ISBN -->
+            @if (!string.IsNullOrEmpty(Model.Livre.ISBN))
+            {
+                <div class="book-isbn-elegant">
+                    <span class="isbn-label-elegant">ISBN</span>
+                    <span class="isbn-value-elegant">@Model.Livre.ISBN</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

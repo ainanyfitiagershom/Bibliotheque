@@ -1,0 +1,98 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Emprunts.DetailsModel
+@{
+    ViewData["Title"] = "Détails de l'emprunt";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-journal-text"></i> Détails de l'emprunt #@Model.Emprunt?.IdEmprunt
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Livre</h5>
+                        <div class="d-flex align-items-center mb-3">
+                            @if (!string.IsNullOrEmpty(Model.Emprunt?.Livre?.ImageCouverture))
+                            {
+                                <img src="@Model.Emprunt.Livre.ImageCouverture" alt="Couverture" style="width: 60px; height: 80px; object-fit: cover;" class="me-3">
+                            }
+                            <div>
+                                <strong><a href="/Livres/Details/@Model.Emprunt?.IdLivre">@Model.Emprunt?.Livre?.Titre</a></strong>
+                                <br><small class="text-muted">@Model.Emprunt?.Livre?.Auteur?.NomComplet</small>
+                                <br><small>ISBN: @Model.Emprunt?.Livre?.ISBN</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Emprunteur</h5>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                <span class="text-white fw-bold">@Model.Emprunt?.Utilisateur?.Nom[0]@Model.Emprunt?.Utilisateur?.Prenom[0]</span>
+                            </div>
+                            <div>
+                                <strong><a href="/Utilisateurs/Details/@Model.Emprunt?.IdUtilisateur">@Model.Emprunt?.Utilisateur?.Nom @Model.Emprunt?.Utilisateur?.Prenom</a></strong>
+                                <br><small class="text-muted">@Model.Emprunt?.Utilisateur?.Email</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <small class="text-muted">Date d'emprunt</small>
+                        <h5>@Model.Emprunt?.DateEmprunt.ToString("dd/MM/yyyy")</h5>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <small class="text-muted">Retour prévu</small>
+                        <h5>@Model.Emprunt?.DateRetourPrevue.ToString("dd/MM/yyyy")</h5>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <small class="text-muted">Retour effectif</small>
+                        <h5>@(Model.Emprunt?.DateRetourEffective?.ToString("dd/MM/yyyy") ?? "-")</h5>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <small class="text-muted">Statut</small>
+                        <div>
+                            @{
+                                var badgeClass = Model.Emprunt?.Statut switch
+                                {
+                                    "EnCours" => "bg-primary",
+                                    "EnRetard" => "bg-danger",
+                                    "Termine" => "bg-success",
+                                    _ => "bg-secondary"
+                                };
+                            }
+                            <span class="badge @badgeClass fs-6">@Model.Emprunt?.Statut</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Emprunt?.NombreProlongations > 0)
+                {
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-calendar-plus"></i> Cet emprunt a été prolongé <strong>@Model.Emprunt.NombreProlongations fois</strong>.
+                    </div>
+                }
+
+                @if (Model.Emprunt?.Statut == "Termine" && Model.Emprunt?.DateRetourEffective > Model.Emprunt?.DateRetourPrevue)
+                {
+                    var joursRetard = (Model.Emprunt.DateRetourEffective.Value - Model.Emprunt.DateRetourPrevue).Days;
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-exclamation-triangle"></i> Retourné avec <strong>@joursRetard jour(s) de retard</strong>.
+                    </div>
+                }
+
+                <div class="d-flex gap-2 mt-4">
+                    <a href="/Emprunts/Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

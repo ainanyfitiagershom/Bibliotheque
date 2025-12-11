@@ -1,0 +1,76 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Categories.EditModel
+@{
+    ViewData["Title"] = "Modifier la catégorie";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pencil"></i> Modifier : @Model.Input.Nom
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="Input.IdCategorie" />
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Nom" class="form-label"></label>
+                        <input asp-for="Input.Nom" class="form-control" required>
+                        <span asp-validation-for="Input.Nom" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Description" class="form-label"></label>
+                        <textarea asp-for="Input.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Input.Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Couleur" class="form-label"></label>
+                        <div class="input-group">
+                            <input asp-for="Input.Couleur" type="color" class="form-control form-control-color" style="width: 60px;">
+                            <input type="text" id="couleurText" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Aperçu</label>
+                        <div>
+                            <span id="previewBadge" class="badge" style="background-color: @Model.Input.Couleur">@Model.Input.Nom</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Enregistrer
+                        </button>
+                        <a href="/Categories/Index" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorInput = document.getElementById('Input_Couleur');
+            const colorText = document.getElementById('couleurText');
+            const nomInput = document.getElementById('Input_Nom');
+            const previewBadge = document.getElementById('previewBadge');
+
+            function updatePreview() {
+                const color = colorInput.value;
+                colorText.value = color;
+                previewBadge.style.backgroundColor = color;
+                previewBadge.textContent = nomInput.value || 'Nom de la catégorie';
+            }
+
+            colorInput.addEventListener('input', updatePreview);
+            nomInput.addEventListener('input', updatePreview);
+            updatePreview();
+        });
+    </script>
+}

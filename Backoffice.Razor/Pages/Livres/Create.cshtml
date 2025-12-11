@@ -1,0 +1,126 @@
+@page
+@model Backoffice.Razor.Pages.Livres.CreateModel
+@{
+    ViewData["Title"] = "Ajouter un livre";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-plus-lg"></i> Ajouter un nouveau livre
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Input.ISBN" class="form-label"></label>
+                            <input asp-for="Input.ISBN" class="form-control" placeholder="978-XXX-XXX-XXX">
+                            <span asp-validation-for="Input.ISBN" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Input.Titre" class="form-label"></label>
+                            <input asp-for="Input.Titre" class="form-control" required>
+                            <span asp-validation-for="Input.Titre" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.IdAuteur" class="form-label">Auteur</label>
+                            <select asp-for="Input.IdAuteur" class="form-select" required>
+                                <option value="">-- Sélectionner un auteur --</option>
+                                @foreach (var auteur in Model.Auteurs)
+                                {
+                                    <option value="@auteur.IdAuteur">@auteur.NomComplet</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Input.IdAuteur" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Input.Annee" class="form-label"></label>
+                            <input asp-for="Input.Annee" class="form-control" type="number" min="1000" max="2100">
+                            <span asp-validation-for="Input.Annee" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Input.Stock" class="form-label"></label>
+                            <input asp-for="Input.Stock" class="form-control" type="number" min="0" value="1">
+                            <span asp-validation-for="Input.Stock" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Editeur" class="form-label"></label>
+                            <input asp-for="Input.Editeur" class="form-control">
+                            <span asp-validation-for="Input.Editeur" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Input.NombrePages" class="form-label"></label>
+                            <input asp-for="Input.NombrePages" class="form-control" type="number" min="1">
+                            <span asp-validation-for="Input.NombrePages" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Input.Langue" class="form-label"></label>
+                            <select asp-for="Input.Langue" class="form-select">
+                                <option value="Français">Français</option>
+                                <option value="Anglais">Anglais</option>
+                                <option value="Espagnol">Espagnol</option>
+                                <option value="Allemand">Allemand</option>
+                                <option value="Italien">Italien</option>
+                                <option value="Arabe">Arabe</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Catégories</label>
+                        <div class="row">
+                            @foreach (var cat in Model.Categories)
+                            {
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="Input.CategorieIds" value="@cat.IdCategorie" id="cat_@cat.IdCategorie">
+                                        <label class="form-check-label" for="cat_@cat.IdCategorie">
+                                            <span class="badge" style="background-color: @cat.Couleur">@cat.Nom</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Description" class="form-label"></label>
+                        <textarea asp-for="Input.Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Input.Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Input.ImageCouverture" class="form-label">URL de l'image de couverture</label>
+                            <input asp-for="Input.ImageCouverture" class="form-control" placeholder="https://...">
+                            <span asp-validation-for="Input.ImageCouverture" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Input.Emplacement" class="form-label"></label>
+                            <input asp-for="Input.Emplacement" class="form-control" placeholder="Ex: A-15">
+                            <span asp-validation-for="Input.Emplacement" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Enregistrer
+                        </button>
+                        <a href="/Livres/Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

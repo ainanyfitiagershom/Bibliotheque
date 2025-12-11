@@ -1,0 +1,103 @@
+@page
+@model Backoffice.Razor.Pages.Emprunts.CreateModel
+@{
+    ViewData["Title"] = "Nouvel emprunt";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-journal-plus"></i> Enregistrer un nouvel emprunt
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Utilisateur</label>
+                            <select asp-for="IdUtilisateur" class="form-select" required>
+                                <option value="">-- Sélectionner un utilisateur --</option>
+                                @foreach (var user in Model.Utilisateurs)
+                                {
+                                    <option value="@user.IdUtilisateur">@user.Nom @user.Prenom (@user.NumeroAbonne)</option>
+                                }
+                            </select>
+                            <span asp-validation-for="IdUtilisateur" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Livre</label>
+                            <select asp-for="IdLivre" class="form-select" required>
+                                <option value="">-- Sélectionner un livre --</option>
+                                @foreach (var livre in Model.Livres)
+                                {
+                                    <option value="@livre.IdLivre" data-stock="@livre.StockDisponible">
+                                        @livre.Titre (@livre.StockDisponible disponible(s))
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="IdLivre" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date d'emprunt</label>
+                            <input asp-for="DateEmprunt" type="date" class="form-control" required>
+                            <span asp-validation-for="DateEmprunt" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date de retour prévue</label>
+                            <input asp-for="DateRetourPrevue" type="date" class="form-control" required>
+                            <span asp-validation-for="DateRetourPrevue" class="text-danger"></span>
+                            <small class="text-muted">Durée maximale : 21 jours</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Règles d'emprunt :</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Maximum 3 emprunts simultanés par utilisateur</li>
+                            <li>Durée maximale : 21 jours</li>
+                            <li>2 prolongations possibles de 7 jours chacune</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Enregistrer l'emprunt
+                        </button>
+                        <a href="/Emprunts/Index" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateEmprunt = document.getElementById('DateEmprunt');
+            const dateRetour = document.getElementById('DateRetourPrevue');
+
+            // Définir la date d'emprunt à aujourd'hui
+            const today = new Date().toISOString().split('T')[0];
+            dateEmprunt.value = today;
+
+            // Définir la date de retour à 21 jours
+            const retourDate = new Date();
+            retourDate.setDate(retourDate.getDate() + 21);
+            dateRetour.value = retourDate.toISOString().split('T')[0];
+
+            // Mettre à jour la date de retour quand la date d'emprunt change
+            dateEmprunt.addEventListener('change', function() {
+                const emprunt = new Date(this.value);
+                emprunt.setDate(emprunt.getDate() + 21);
+                dateRetour.value = emprunt.toISOString().split('T')[0];
+            });
+        });
+    </script>
+}

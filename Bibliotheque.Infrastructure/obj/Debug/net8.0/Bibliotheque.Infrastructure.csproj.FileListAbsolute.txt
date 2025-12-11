@@ -1,0 +1,17 @@
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/bin/Debug/net8.0/Bibliotheque.Infrastructure.deps.json
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/bin/Debug/net8.0/Bibliotheque.Infrastructure.runtimeconfig.json
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/bin/Debug/net8.0/Bibliotheque.Infrastructure.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/bin/Debug/net8.0/Bibliotheque.Infrastructure.pdb
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/bin/Debug/net8.0/Bibliotheque.Core.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/bin/Debug/net8.0/Bibliotheque.Core.pdb
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.csproj.AssemblyReference.cache
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.AssemblyInfoInputs.cache
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.AssemblyInfo.cs
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.csproj.CoreCompileInputs.cache
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Biblioth.E62CB28D.Up2Date
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/refint/Bibliotheque.Infrastructure.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.pdb
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.genruntimeconfig.cache
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/ref/Bibliotheque.Infrastructure.dll

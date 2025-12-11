@@ -1,0 +1,50 @@
+@model List<Notification>
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-bell"></i> Notifications</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                @foreach (var notif in Model)
+                {
+                    <div class="d-flex align-items-start mb-3 pb-3 border-bottom @(!notif.Lu ? "bg-light rounded p-2" : "")">
+                        <div class="me-3">
+                            @{
+                                var icon = notif.Type switch
+                                {
+                                    "ReservationDisponible" => "bi-bookmark-check text-success",
+                                    "RetardEmprunt" => "bi-exclamation-triangle text-danger",
+                                    "RappelRetour" => "bi-clock text-warning",
+                                    _ => "bi-info-circle text-info"
+                                };
+                            }
+                            <i class="bi @icon fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">@notif.Message</p>
+                            <small class="text-muted">@notif.DateCreation.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                        @if (!notif.Lu)
+                        {
+                            <span class="badge bg-primary">Nouveau</span>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted text-center mb-0">Aucune notification.</p>
+            }
+        </div>
+    </div>
+</div>

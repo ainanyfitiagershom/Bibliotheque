@@ -1,0 +1,82 @@
+@model List<ReservationDTO>
+@{
+    ViewData["Title"] = "Mes réservations";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-bookmark"></i> Mes réservations</h4>
+        <a asp-controller="Compte" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var reservation in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card @(reservation.Statut == "Disponible" ? "border-success" : "")">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                @if (!string.IsNullOrEmpty(reservation.ImageCouverture))
+                                {
+                                    <img src="@reservation.ImageCouverture" alt="Couverture" class="me-3" style="width: 80px; height: 110px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 110px;">
+                                        <i class="bi bi-book text-white fs-3"></i>
+                                    </div>
+                                }
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">
+                                        <a href="/Livres/Details/@reservation.IdLivre" class="text-decoration-none">@reservation.TitreLivre</a>
+                                    </h5>
+                                    <p class="text-muted mb-2">@reservation.NomAuteur</p>
+
+                                    <p class="mb-2">
+                                        <small>
+                                            <i class="bi bi-calendar"></i> Réservé le @reservation.DateReservation.ToString("dd/MM/yyyy")
+                                        </small>
+                                    </p>
+
+                                    @if (reservation.Statut == "Disponible")
+                                    {
+                                        <div class="alert alert-success py-2 mb-2">
+                                            <i class="bi bi-check-circle"></i>
+                                            <strong>Disponible !</strong>
+                                            <br>À récupérer avant le @reservation.DateExpiration?.ToString("dd/MM/yyyy")
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-hourglass"></i> Position @reservation.PositionFile dans la file d'attente
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <form asp-action="Annuler" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                <input type="hidden" name="id" value="@reservation.IdReservation" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-x-lg"></i> Annuler la réservation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> Vous n'avez aucune réservation.
+            <a href="/Livres" class="alert-link">Parcourir le catalogue</a>
+        </div>
+    }
+</div>

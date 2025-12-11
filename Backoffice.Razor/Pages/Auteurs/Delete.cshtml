@@ -1,0 +1,61 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Auteurs.DeleteModel
+@{
+    ViewData["Title"] = "Supprimer l'auteur";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle"></i> Confirmation de suppression
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    @if (!string.IsNullOrEmpty(Model.Auteur?.PhotoUrl))
+                    {
+                        <img src="@Model.Auteur.PhotoUrl" alt="@Model.Auteur.NomComplet" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-fill text-white" style="font-size: 2.5rem;"></i>
+                        </div>
+                    }
+                    <h4>@Model.Auteur?.NomComplet</h4>
+                    @if (!string.IsNullOrEmpty(Model.Auteur?.Nationalite))
+                    {
+                        <p class="text-muted mb-0">@Model.Auteur.Nationalite</p>
+                    }
+                </div>
+
+                @if (Model.NombreLivres > 0)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attention !</strong> Cet auteur a <strong>@Model.NombreLivres livre(s)</strong> associé(s).
+                        <br>La suppression désactivera l'auteur mais les livres resteront dans le système.
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Cet auteur n'a aucun livre associé.
+                    </div>
+                }
+
+                <p class="text-center">Êtes-vous sûr de vouloir supprimer cet auteur ?</p>
+
+                <form method="post" class="d-flex gap-2 justify-content-center">
+                    <input type="hidden" name="id" value="@Model.Auteur?.IdAuteur" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirmer la suppression
+                    </button>
+                    <a href="/Auteurs/Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

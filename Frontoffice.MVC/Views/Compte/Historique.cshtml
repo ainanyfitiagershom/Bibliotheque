@@ -1,0 +1,70 @@
+@model List<EmpruntDTO>
+@{
+    ViewData["Title"] = "Historique des emprunts";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-clock-history"></i> Historique des emprunts</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Livre</th>
+                                <th>Date emprunt</th>
+                                <th>Date retour</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var emprunt in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(emprunt.ImageCouverture))
+                                            {
+                                                <img src="@emprunt.ImageCouverture" alt="Couverture" class="me-2" style="width: 40px; height: 55px; object-fit: cover;">
+                                            }
+                                            <div>
+                                                <a href="/Livres/Details/@emprunt.IdLivre" class="text-decoration-none">@emprunt.TitreLivre</a>
+                                                <br><small class="text-muted">@emprunt.NomAuteur</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@emprunt.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                                    <td>@(emprunt.DateRetourEffective?.ToString("dd/MM/yyyy") ?? "-")</td>
+                                    <td>
+                                        @{
+                                            var badgeClass = emprunt.Statut switch
+                                            {
+                                                "EnCours" => "bg-primary",
+                                                "EnRetard" => "bg-danger",
+                                                "Termine" => "bg-success",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @badgeClass">@emprunt.Statut</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted text-center mb-0">Aucun emprunt dans l'historique.</p>
+            }
+        </div>
+    </div>
+</div>

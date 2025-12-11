@@ -1,0 +1,157 @@
+@model LivresIndexViewModel
+@{
+    ViewData["Title"] = "Catalogue";
+}
+
+<div class="container section-elegant">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-elegant">
+        <a href="/"><i class="bi bi-house-heart"></i> Accueil</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>Catalogue</span>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header-elegant">
+        <h1>Notre Collection</h1>
+        <p>Explorez notre sélection de livres soigneusement choisis</p>
+    </div>
+
+    <div class="catalog-layout-elegant">
+        <!-- Sidebar Filters -->
+        <aside class="filters-sidebar-elegant">
+            <div class="filter-card-elegant">
+                <form method="get">
+                    <div class="filter-group-elegant">
+                        <h3><i class="bi bi-search"></i> Recherche</h3>
+                        <input type="text" name="search" class="filter-input-elegant" value="@Model.Search" placeholder="Titre, auteur, ISBN...">
+                    </div>
+
+                    <div class="filter-group-elegant">
+                        <h3><i class="bi bi-sort-alpha-down"></i> Trier par</h3>
+                        <select name="tri" class="filter-select-elegant">
+                            <option value="titre" selected="@(Model.Tri == "titre")">Titre (A-Z)</option>
+                            <option value="recent" selected="@(Model.Tri == "recent")">Plus récents</option>
+                            <option value="populaire" selected="@(Model.Tri == "populaire")">Plus populaires</option>
+                            <option value="note" selected="@(Model.Tri == "note")">Mieux notés</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-elegant btn-primary-elegant w-100">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories -->
+            <div class="filter-card-elegant mt-4">
+                <h3><i class="bi bi-bookmark-heart"></i> Catégories</h3>
+                <ul class="category-list-elegant">
+                    <li>
+                        <a href="/Livres" class="@(Model.CategorieId == null ? "active" : "")">
+                            <i class="bi bi-collection"></i>
+                            Toutes les catégories
+                        </a>
+                    </li>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <li>
+                            <a href="/Livres?categorieId=@cat.IdCategorie" class="@(Model.CategorieId == cat.IdCategorie ? "active" : "")">
+                                <span class="category-dot-elegant" style="background-color: @cat.Couleur;"></span>
+                                @cat.Nom
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Results -->
+        <main class="catalog-main-elegant">
+            <div class="results-header-elegant">
+                <div class="results-count-elegant">
+                    @if (!string.IsNullOrEmpty(Model.Search))
+                    {
+                        <span>Résultats pour "<strong>@Model.Search</strong>"</span>
+                    }
+                    else
+                    {
+                        <span><strong>@Model.Livres.TotalCount</strong> livres dans notre collection</span>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Livres.Items.Any())
+            {
+                <div class="books-grid-elegant">
+                    @foreach (var livre in Model.Livres.Items)
+                    {
+                        @await Html.PartialAsync("_LivreCard", livre)
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (Model.Livres.TotalPages > 1)
+                {
+                    <div class="pagination-elegant">
+                        @if (Model.Livres.Page > 1)
+                        {
+                            <a href="?page=@(Model.Livres.Page - 1)&search=@Model.Search&categorieId=@Model.CategorieId&tri=@Model.Tri" class="pagination-btn-elegant">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="pagination-btn-elegant disabled"><i class="bi bi-chevron-left"></i></span>
+                        }
+
+                        @{
+                            int startPage = Math.Max(1, Model.Livres.Page - 2);
+                            int endPage = Math.Min(Model.Livres.TotalPages, startPage + 4);
+                            if (endPage - startPage < 4)
+                            {
+                                startPage = Math.Max(1, endPage - 4);
+                            }
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            if (i == Model.Livres.Page)
+                            {
+                                <span class="pagination-btn-elegant active">@i</span>
+                            }
+                            else
+                            {
+                                <a href="?page=@i&search=@Model.Search&categorieId=@Model.CategorieId&tri=@Model.Tri" class="pagination-btn-elegant">@i</a>
+                            }
+                        }
+
+                        @if (Model.Livres.Page < Model.Livres.TotalPages)
+                        {
+                            <a href="?page=@(Model.Livres.Page + 1)&search=@Model.Search&categorieId=@Model.CategorieId&tri=@Model.Tri" class="pagination-btn-elegant">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="pagination-btn-elegant disabled"><i class="bi bi-chevron-right"></i></span>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state-elegant">
+                    <div class="empty-icon-elegant">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h3>Aucun livre trouvé</h3>
+                    <p>Essayez de modifier vos critères de recherche</p>
+                    <a href="/Livres" class="btn-elegant btn-primary-elegant mt-3">
+                        <i class="bi bi-collection"></i> Voir tous les livres
+                    </a>
+                </div>
+            }
+        </main>
+    </div>
+</div>

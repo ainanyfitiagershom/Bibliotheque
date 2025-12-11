@@ -1,0 +1,135 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Inscription";
+}
+
+<div class="auth-page-elegant">
+    <div class="container">
+        <div class="auth-container-elegant">
+            <!-- Illustration / Decoration -->
+            <div class="auth-decoration-elegant">
+                <div class="auth-decoration-content">
+                    <div class="auth-icon-large">
+                        <i class="bi bi-person-hearts"></i>
+                    </div>
+                    <h2>Rejoignez Bibliotheca</h2>
+                    <p>Creez votre compte et accedez a des milliers de livres qui n'attendent que vous.</p>
+                    <div class="auth-features">
+                        <div class="auth-feature">
+                            <i class="bi bi-book-half"></i>
+                            <span>+10 000 livres disponibles</span>
+                        </div>
+                        <div class="auth-feature">
+                            <i class="bi bi-bookmark-heart"></i>
+                            <span>Reservations en ligne</span>
+                        </div>
+                        <div class="auth-feature">
+                            <i class="bi bi-gift"></i>
+                            <span>Inscription gratuite</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulaire -->
+            <div class="auth-form-elegant">
+                <div class="auth-form-header">
+                    <div class="auth-avatar">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h1>Inscription</h1>
+                    <p>Creez votre compte en quelques instants</p>
+                </div>
+
+                <form method="post" class="auth-form-content">
+                    <div asp-validation-summary="ModelOnly" class="alert-elegant alert-error-elegant mb-4"></div>
+
+                    <div class="form-row-elegant">
+                        <div class="form-group-elegant">
+                            <label asp-for="Nom" class="form-label-elegant">
+                                <i class="bi bi-person"></i> Nom *
+                            </label>
+                            <div class="input-elegant-wrapper">
+                                <input asp-for="Nom" class="input-elegant" placeholder="Votre nom" required>
+                            </div>
+                            <span asp-validation-for="Nom" class="validation-error-elegant"></span>
+                        </div>
+
+                        <div class="form-group-elegant">
+                            <label asp-for="Prenom" class="form-label-elegant">
+                                <i class="bi bi-person-badge"></i> Prenom *
+                            </label>
+                            <div class="input-elegant-wrapper">
+                                <input asp-for="Prenom" class="input-elegant" placeholder="Votre prenom" required>
+                            </div>
+                            <span asp-validation-for="Prenom" class="validation-error-elegant"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-elegant">
+                        <label asp-for="Email" class="form-label-elegant">
+                            <i class="bi bi-envelope-heart"></i> Adresse email *
+                        </label>
+                        <div class="input-elegant-wrapper">
+                            <input asp-for="Email" class="input-elegant" placeholder="votre@email.com" required>
+                        </div>
+                        <span asp-validation-for="Email" class="validation-error-elegant"></span>
+                    </div>
+
+                    <div class="form-group-elegant">
+                        <label asp-for="Telephone" class="form-label-elegant">
+                            <i class="bi bi-telephone"></i> Telephone
+                        </label>
+                        <div class="input-elegant-wrapper">
+                            <input asp-for="Telephone" class="input-elegant" placeholder="+33 6 XX XX XX XX">
+                        </div>
+                        <span asp-validation-for="Telephone" class="validation-error-elegant"></span>
+                    </div>
+
+                    <div class="form-row-elegant">
+                        <div class="form-group-elegant">
+                            <label asp-for="Password" class="form-label-elegant">
+                                <i class="bi bi-lock"></i> Mot de passe *
+                            </label>
+                            <div class="input-elegant-wrapper">
+                                <input asp-for="Password" class="input-elegant" placeholder="Min. 6 caracteres" required>
+                            </div>
+                            <span asp-validation-for="Password" class="validation-error-elegant"></span>
+                        </div>
+
+                        <div class="form-group-elegant">
+                            <label asp-for="ConfirmPassword" class="form-label-elegant">
+                                <i class="bi bi-lock-fill"></i> Confirmer *
+                            </label>
+                            <div class="input-elegant-wrapper">
+                                <input asp-for="ConfirmPassword" class="input-elegant" placeholder="Confirmer" required>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="validation-error-elegant"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-hint-elegant">
+                        <i class="bi bi-info-circle"></i>
+                        <span>Le mot de passe doit contenir au moins 6 caracteres.</span>
+                    </div>
+
+                    <button type="submit" class="btn-elegant btn-primary-elegant btn-full">
+                        <i class="bi bi-person-plus"></i> Creer mon compte
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>ou</span>
+                </div>
+
+                <div class="auth-footer-elegant">
+                    <p>Deja inscrit ?</p>
+                    <a asp-action="Login" class="btn-elegant btn-secondary-elegant btn-full">
+                        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

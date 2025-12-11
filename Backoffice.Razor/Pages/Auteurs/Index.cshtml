@@ -1,0 +1,90 @@
+@page
+@model Backoffice.Razor.Pages.Auteurs.IndexModel
+@{
+    ViewData["Title"] = "Gestion des Auteurs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-0">Liste des auteurs</h4>
+        <small class="text-muted">@Model.Auteurs.Count auteurs</small>
+    </div>
+    <a href="/Auteurs/Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Ajouter un auteur
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="recherche" value="@Model.Recherche" placeholder="Rechercher par nom...">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-search"></i> Rechercher
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 60px;"></th>
+                    <th>Nom</th>
+                    <th>Nationalité</th>
+                    <th>Dates</th>
+                    <th class="text-center">Livres</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var auteur in Model.Auteurs)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(auteur.PhotoUrl))
+                            {
+                                <img src="@auteur.PhotoUrl" alt="" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="avatar"><i class="bi bi-person"></i></div>
+                            }
+                        </td>
+                        <td>
+                            <strong>@auteur.NomComplet</strong>
+                        </td>
+                        <td>@(auteur.Nationalite ?? "-")</td>
+                        <td>
+                            @if (auteur.DateNaissance.HasValue)
+                            {
+                                <span>@auteur.DateNaissance.Value.Year</span>
+                                @if (auteur.DateDeces.HasValue)
+                                {
+                                    <span> - @auteur.DateDeces.Value.Year</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-primary">@auteur.NombreLivres</span>
+                        </td>
+                        <td class="text-end">
+                            <a href="/Auteurs/Details/@auteur.IdAuteur" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
+                            <a href="/Auteurs/Edit/@auteur.IdAuteur" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                            <a href="/Auteurs/Delete/@auteur.IdAuteur" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

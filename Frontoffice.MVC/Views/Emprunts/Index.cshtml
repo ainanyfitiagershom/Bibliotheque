@@ -1,0 +1,105 @@
+@model List<EmpruntDTO>
+@{
+    ViewData["Title"] = "Mes emprunts";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-book"></i> Mes emprunts en cours</h4>
+        <a asp-controller="Compte" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var emprunt in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card @(emprunt.Statut == "EnRetard" ? "border-danger" : "")">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                @if (!string.IsNullOrEmpty(emprunt.ImageCouverture))
+                                {
+                                    <img src="@emprunt.ImageCouverture" alt="Couverture" class="me-3" style="width: 80px; height: 110px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 110px;">
+                                        <i class="bi bi-book text-white fs-3"></i>
+                                    </div>
+                                }
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">
+                                        <a href="/Livres/Details/@emprunt.IdLivre" class="text-decoration-none">@emprunt.TitreLivre</a>
+                                    </h5>
+                                    <p class="text-muted mb-2">@emprunt.NomAuteur</p>
+
+                                    <p class="mb-1">
+                                        <small>
+                                            <i class="bi bi-calendar"></i> Emprunté le @emprunt.DateEmprunt.ToString("dd/MM/yyyy")
+                                        </small>
+                                    </p>
+                                    <p class="mb-2">
+                                        <small>
+                                            <i class="bi bi-calendar-check"></i> Retour prévu : @emprunt.DateRetourPrevue.ToString("dd/MM/yyyy")
+                                        </small>
+                                    </p>
+
+                                    @{
+                                        var joursRestants = (emprunt.DateRetourPrevue - DateTime.Today).Days;
+                                        var badgeClass = joursRestants < 0 ? "bg-danger" : joursRestants <= 3 ? "bg-warning text-dark" : "bg-success";
+                                    }
+                                    <span class="badge @badgeClass">
+                                        @if (joursRestants < 0)
+                                        {
+                                            <span>En retard de @Math.Abs(joursRestants) jour(s)</span>
+                                        }
+                                        else if (joursRestants == 0)
+                                        {
+                                            <span>Retour aujourd'hui</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@joursRestants jour(s) restant(s)</span>
+                                        }
+                                    </span>
+
+                                    @if (emprunt.NombreProlongations > 0)
+                                    {
+                                        <span class="badge bg-info">Prolongé @emprunt.NombreProlongations fois</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            @if (emprunt.NombreProlongations < 2)
+                            {
+                                <form asp-action="Prolonger" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@emprunt.IdEmprunt" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-calendar-plus"></i> Prolonger (7 jours)
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">
+                                    <i class="bi bi-info-circle"></i> Prolongations max atteintes
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> Vous n'avez aucun emprunt en cours.
+            <a href="/Livres" class="alert-link">Parcourir le catalogue</a>
+        </div>
+    }
+</div>

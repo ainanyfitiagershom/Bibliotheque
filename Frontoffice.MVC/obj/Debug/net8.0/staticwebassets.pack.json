@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "/home/tsarajoro/Documents/net/BibliothequeSolution/Frontoffice.MVC/wwwroot/css/site.css",
+      "PackagePath": "staticwebassets/css/site.css"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.Frontoffice.MVC.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.Frontoffice.MVC.props",
+      "PackagePath": "build\\Frontoffice.MVC.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.Frontoffice.MVC.props",
+      "PackagePath": "buildMultiTargeting\\Frontoffice.MVC.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.Frontoffice.MVC.props",
+      "PackagePath": "buildTransitive\\Frontoffice.MVC.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

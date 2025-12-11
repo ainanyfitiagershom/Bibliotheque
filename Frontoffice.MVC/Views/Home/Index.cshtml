@@ -1,0 +1,142 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Accueil";
+}
+
+<!-- Hero Section Elegant -->
+<section class="hero-elegant">
+    <div class="hero-content-elegant">
+        <span class="hero-badge-elegant">Bibliothèque en ligne</span>
+        <h1>Plongez dans l'univers<br><em>des mots</em></h1>
+        <p class="hero-subtitle-elegant">Des milliers de livres vous attendent. Empruntez, lisez et laissez-vous emporter par des histoires extraordinaires.</p>
+        <div class="hero-buttons-elegant">
+            <a href="/Livres" class="btn-elegant btn-primary-elegant">
+                <i class="bi bi-compass"></i>
+                Explorer le catalogue
+            </a>
+            @if (!(User.Identity?.IsAuthenticated == true))
+            {
+                <a href="/Compte/Register" class="btn-elegant btn-secondary-elegant">
+                    <i class="bi bi-heart"></i>
+                    Créer un compte
+                </a>
+            }
+        </div>
+    </div>
+    <div class="hero-decoration"></div>
+</section>
+
+<div class="container">
+    <!-- Categories Elegant -->
+    <section class="section-elegant">
+        <div class="categories-elegant">
+            @foreach (var cat in Model.Categories)
+            {
+                <a href="/Livres?categorieId=@cat.IdCategorie" class="category-pill-elegant">
+                    @cat.Nom
+                </a>
+            }
+        </div>
+    </section>
+
+    <!-- Nouveautés -->
+    <section class="section-elegant">
+        <div class="section-header-elegant">
+            <div class="section-title-elegant">
+                <span class="section-icon-elegant"><i class="bi bi-stars"></i></span>
+                <h2>Nouveautés</h2>
+            </div>
+            <a href="/Livres?tri=recent" class="see-all-elegant">
+                Tout voir <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div class="books-grid-elegant">
+            @foreach (var livre in Model.Nouveautes)
+            {
+                @await Html.PartialAsync("_LivreCard", livre)
+            }
+        </div>
+    </section>
+
+    <!-- Les plus populaires -->
+    <section class="section-elegant">
+        <div class="section-header-elegant">
+            <div class="section-title-elegant">
+                <span class="section-icon-elegant"><i class="bi bi-heart-fill"></i></span>
+                <h2>Les plus populaires</h2>
+            </div>
+            <a href="/Livres?tri=populaire" class="see-all-elegant">
+                Tout voir <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div class="books-grid-elegant">
+            @foreach (var livre in Model.Populaires)
+            {
+                @await Html.PartialAsync("_LivreCard", livre)
+            }
+        </div>
+    </section>
+
+    <!-- Recommandations -->
+    @if (User.Identity?.IsAuthenticated == true && Model.Recommandations.Any())
+    {
+        <section class="section-elegant">
+            <div class="section-header-elegant">
+                <div class="section-title-elegant">
+                    <span class="section-icon-elegant"><i class="bi bi-magic"></i></span>
+                    <h2>Recommandés pour vous</h2>
+                </div>
+            </div>
+            <div class="books-grid-elegant">
+                @foreach (var livre in Model.Recommandations)
+                {
+                    @await Html.PartialAsync("_LivreCard", livre)
+                }
+            </div>
+        </section>
+    }
+
+    <!-- Stats Section -->
+    <section class="section-elegant">
+        <div class="stats-elegant">
+            <div class="stat-card-elegant">
+                <div class="stat-icon-elegant">
+                    <i class="bi bi-book"></i>
+                </div>
+                <div class="stat-number-elegant">5000+</div>
+                <div class="stat-label-elegant">Livres disponibles</div>
+            </div>
+            <div class="stat-card-elegant">
+                <div class="stat-icon-elegant">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-number-elegant">1000+</div>
+                <div class="stat-label-elegant">Membres actifs</div>
+            </div>
+            <div class="stat-card-elegant">
+                <div class="stat-icon-elegant">
+                    <i class="bi bi-collection"></i>
+                </div>
+                <div class="stat-number-elegant">50+</div>
+                <div class="stat-label-elegant">Catégories</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section-elegant">
+        <div class="cta-elegant">
+            <div class="cta-content-elegant">
+                <h3>Rejoignez notre communauté</h3>
+                <p>Créez votre compte gratuitement et accédez à des milliers de livres, suivez vos lectures et découvrez des recommandations personnalisées.</p>
+                @if (!(User.Identity?.IsAuthenticated == true))
+                {
+                    <a href="/Compte/Register" class="btn-elegant btn-primary-elegant">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Commencer maintenant
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+</div>

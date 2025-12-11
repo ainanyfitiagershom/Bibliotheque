@@ -1,0 +1,194 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Utilisateurs.DetailsModel
+@{
+    ViewData["Title"] = "Profil utilisateur";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-person-circle"></i> Profil
+            </div>
+            <div class="card-body text-center">
+                <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                    <span class="text-white fw-bold" style="font-size: 2.5rem;">@Model.Utilisateur?.Nom[0]@Model.Utilisateur?.Prenom[0]</span>
+                </div>
+                <h4>@Model.Utilisateur?.Nom @Model.Utilisateur?.Prenom</h4>
+                <p class="text-muted mb-2">
+                    <span class="badge bg-secondary">@Model.Utilisateur?.NumeroAbonne</span>
+                </p>
+                @{
+                    var badgeClass = Model.Utilisateur?.Statut switch
+                    {
+                        "Actif" => "bg-success",
+                        "Bloque" => "bg-danger",
+                        _ => "bg-secondary"
+                    };
+                }
+                <span class="badge @badgeClass">@Model.Utilisateur?.Statut</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="bi bi-envelope"></i> @Model.Utilisateur?.Email
+                </li>
+                @if (!string.IsNullOrEmpty(Model.Utilisateur?.Telephone))
+                {
+                    <li class="list-group-item">
+                        <i class="bi bi-telephone"></i> @Model.Utilisateur.Telephone
+                    </li>
+                }
+                @if (!string.IsNullOrEmpty(Model.Utilisateur?.Adresse))
+                {
+                    <li class="list-group-item">
+                        <i class="bi bi-geo-alt"></i> @Model.Utilisateur.Adresse
+                    </li>
+                }
+                @if (Model.Utilisateur?.DateNaissance.HasValue == true)
+                {
+                    <li class="list-group-item">
+                        <i class="bi bi-calendar"></i> Né(e) le @Model.Utilisateur.DateNaissance.Value.ToString("dd/MM/yyyy")
+                    </li>
+                }
+                <li class="list-group-item">
+                    <i class="bi bi-calendar-check"></i> Inscrit le @Model.Utilisateur?.DateInscription.ToString("dd/MM/yyyy")
+                </li>
+            </ul>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <i class="bi bi-bar-chart"></i> Statistiques
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Emprunts en cours</span>
+                    <strong class="text-primary">@Model.EmpruntsEnCours</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Emprunts en retard</span>
+                    <strong class="@(Model.EmpruntsEnRetard > 0 ? "text-danger" : "")">@Model.EmpruntsEnRetard</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total emprunts</span>
+                    <strong>@Model.TotalEmprunts</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Réservations actives</span>
+                    <strong>@Model.ReservationsActives</strong>
+                </li>
+            </ul>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <a href="/Utilisateurs/Edit/@Model.Utilisateur?.IdUtilisateur" class="btn btn-primary btn-sm">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            @if (Model.Utilisateur?.Statut == "Actif")
+            {
+                <a href="/Utilisateurs/Block/@Model.Utilisateur?.IdUtilisateur" class="btn btn-warning btn-sm">
+                    <i class="bi bi-lock"></i> Bloquer
+                </a>
+            }
+            <a href="/Utilisateurs/Index" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <!-- Emprunts en cours -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-book"></i> Emprunts en cours (@Model.Emprunts.Count(e => e.Statut == "EnCours" || e.Statut == "EnRetard"))
+            </div>
+            <div class="card-body">
+                @{
+                    var empruntsActifs = Model.Emprunts.Where(e => e.Statut == "EnCours" || e.Statut == "EnRetard").ToList();
+                }
+                @if (empruntsActifs.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Livre</th>
+                                    <th>Date emprunt</th>
+                                    <th>Retour prévu</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var emprunt in empruntsActifs)
+                                {
+                                    <tr class="@(emprunt.Statut == "EnRetard" ? "table-danger" : "")">
+                                        <td>
+                                            <a href="/Livres/Details/@emprunt.Livre?.IdLivre">@emprunt.Livre?.Titre</a>
+                                        </td>
+                                        <td>@emprunt.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                                        <td>@emprunt.DateRetourPrevue.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <span class="badge @(emprunt.Statut == "EnRetard" ? "bg-danger" : "bg-info")">
+                                                @emprunt.Statut
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/Emprunts/Retour/@emprunt.IdEmprunt" class="btn btn-sm btn-success">
+                                                <i class="bi bi-check"></i> Retour
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Aucun emprunt en cours.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Historique des emprunts -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-clock-history"></i> Historique des emprunts
+            </div>
+            <div class="card-body">
+                @{
+                    var historique = Model.Emprunts.Where(e => e.Statut == "Termine").OrderByDescending(e => e.DateRetourEffective).Take(10).ToList();
+                }
+                @if (historique.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Livre</th>
+                                    <th>Emprunt</th>
+                                    <th>Retour</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var emprunt in historique)
+                                {
+                                    <tr>
+                                        <td>@emprunt.Livre?.Titre</td>
+                                        <td>@emprunt.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                                        <td>@emprunt.DateRetourEffective?.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Aucun historique disponible.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

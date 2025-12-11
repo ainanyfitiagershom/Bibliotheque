@@ -1,0 +1,131 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Auteurs.DetailsModel
+@{
+    ViewData["Title"] = "Détails de l'auteur";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-person-circle"></i> Profil
+            </div>
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(Model.Auteur?.PhotoUrl))
+                {
+                    <img src="@Model.Auteur.PhotoUrl" alt="@Model.Auteur.NomComplet" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                        <i class="bi bi-person-fill text-white" style="font-size: 4rem;"></i>
+                    </div>
+                }
+                <h4>@Model.Auteur?.NomComplet</h4>
+                @if (!string.IsNullOrEmpty(Model.Auteur?.Nationalite))
+                {
+                    <p class="text-muted"><i class="bi bi-geo-alt"></i> @Model.Auteur.Nationalite</p>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Informations
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Date de naissance</span>
+                    <strong>@(Model.Auteur?.DateNaissance?.ToString("dd/MM/yyyy") ?? "Non renseignée")</strong>
+                </li>
+                @if (Model.Auteur?.DateDeces.HasValue == true)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Date de décès</span>
+                        <strong>@Model.Auteur.DateDeces.Value.ToString("dd/MM/yyyy")</strong>
+                    </li>
+                }
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Nombre de livres</span>
+                    <strong>@Model.NombreLivres</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        @if (!string.IsNullOrEmpty(Model.Auteur?.Biographie))
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="bi bi-journal-text"></i> Biographie
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.Auteur.Biographie</p>
+                </div>
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-book"></i> Livres de cet auteur (@Model.Livres.Count)</span>
+            </div>
+            <div class="card-body">
+                @if (Model.Livres.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Année</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var livre in Model.Livres)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="/Livres/Details/@livre.IdLivre">@livre.Titre</a>
+                                        </td>
+                                        <td>@livre.Annee</td>
+                                        <td>
+                                            <span class="badge @(livre.StockDisponible > 0 ? "bg-success" : "bg-danger")">
+                                                @livre.StockDisponible / @livre.Stock
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/Livres/Edit/@livre.IdLivre" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle"></i> Aucun livre enregistré pour cet auteur.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <a href="/Auteurs/Edit/@Model.Auteur?.IdAuteur" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a href="/Auteurs/Delete/@Model.Auteur?.IdAuteur" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Supprimer
+            </a>
+            <a href="/Auteurs/Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+@page "{id:int}"
+@model Backoffice.Razor.Pages.Categories.DeleteModel
+@{
+    ViewData["Title"] = "Supprimer la catégorie";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle"></i> Confirmation de suppression
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <span class="badge fs-4 px-4 py-2" style="background-color: @Model.Categorie?.Couleur">
+                        @Model.Categorie?.Nom
+                    </span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Categorie?.Description))
+                {
+                    <p class="text-center text-muted">@Model.Categorie.Description</p>
+                }
+
+                @if (Model.NombreLivres > 0)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attention !</strong> Cette catégorie est associée à <strong>@Model.NombreLivres livre(s)</strong>.
+                        <br>La suppression retirera cette catégorie des livres associés.
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Cette catégorie n'est associée à aucun livre.
+                    </div>
+                }
+
+                <p class="text-center">Êtes-vous sûr de vouloir supprimer cette catégorie ?</p>
+
+                <form method="post" class="d-flex gap-2 justify-content-center">
+                    <input type="hidden" name="id" value="@Model.Categorie?.IdCategorie" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirmer la suppression
+                    </button>
+                    <a href="/Categories/Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,235 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-4 mb-4">
+    <!-- Stat Cards -->
+    <div class="col-md-3">
+        <div class="stat-card primary">
+            <div class="stat-value">@Model.Stats.TotalLivres</div>
+            <div class="stat-label"><i class="bi bi-book"></i> Livres</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card success">
+            <div class="stat-value">@Model.Stats.TotalUtilisateurs</div>
+            <div class="stat-label"><i class="bi bi-people"></i> Utilisateurs</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card warning">
+            <div class="stat-value">@Model.Stats.EmpruntsEnCours</div>
+            <div class="stat-label"><i class="bi bi-arrow-left-right"></i> Emprunts en cours</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card danger">
+            <div class="stat-value">@Model.Stats.EmpruntsEnRetard</div>
+            <div class="stat-label"><i class="bi bi-exclamation-triangle"></i> En retard</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Statistiques secondaires -->
+    <div class="col-md-2">
+        <div class="card text-center p-3">
+            <h3 class="text-primary mb-0">@Model.Stats.TotalAuteurs</h3>
+            <small class="text-muted">Auteurs</small>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center p-3">
+            <h3 class="text-info mb-0">@Model.Stats.TotalCategories</h3>
+            <small class="text-muted">Catégories</small>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center p-3">
+            <h3 class="text-success mb-0">@Model.Stats.TotalExemplaires</h3>
+            <small class="text-muted">Exemplaires</small>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center p-3">
+            <h3 class="text-warning mb-0">@Model.Stats.ReservationsEnAttente</h3>
+            <small class="text-muted">Réservations</small>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center p-3">
+            <h3 class="text-success mb-0">@Model.Stats.EmpruntsAujourdhui</h3>
+            <small class="text-muted">Emprunts aujourd'hui</small>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center p-3">
+            <h3 class="text-info mb-0">@Model.Stats.RetoursAujourdhui</h3>
+            <small class="text-muted">Retours aujourd'hui</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Graphique Emprunts par mois -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-graph-up"></i> Emprunts par mois
+            </div>
+            <div class="card-body">
+                <canvas id="chartEmprunts" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Livres -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-trophy"></i> Top 5 Livres
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    @foreach (var livre in Model.Stats.TopLivres.Take(5))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@livre.Titre</strong><br>
+                                <small class="text-muted">@livre.Auteur</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">@livre.NombreEmprunts</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <!-- Graphique par catégorie -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pie-chart"></i> Emprunts par catégorie
+            </div>
+            <div class="card-body">
+                <canvas id="chartCategories" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicateurs -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-speedometer"></i> Indicateurs
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Taux d'occupation</span>
+                        <span>@Model.Stats.TauxOccupation%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: @Model.Stats.TauxOccupation%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Taux de retard</span>
+                        <span>@Model.Stats.TauxRetard%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-danger" style="width: @Model.Stats.TauxRetard%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightning"></i> Actions rapides
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/Livres/Create" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-lg"></i> Ajouter un livre
+                    </a>
+                    <a href="/Emprunts/Create" class="btn btn-outline-success">
+                        <i class="bi bi-arrow-left-right"></i> Nouvel emprunt
+                    </a>
+                    <a href="/Utilisateurs/Create" class="btn btn-outline-info">
+                        <i class="bi bi-person-plus"></i> Nouvel utilisateur
+                    </a>
+                    <a href="/Admin/ImportExport" class="btn btn-outline-secondary">
+                        <i class="bi bi-file-earmark-arrow-up"></i> Import / Export
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Graphique des emprunts par mois
+    const ctxEmprunts = document.getElementById('chartEmprunts').getContext('2d');
+    new Chart(ctxEmprunts, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParMois.Select(e => e.MoisFormate))),
+            datasets: [{
+                label: 'Emprunts',
+                data: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParMois.Select(e => e.NombreEmprunts))),
+                borderColor: '#4dabf7',
+                backgroundColor: 'rgba(77, 171, 247, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Graphique par catégorie
+    const ctxCategories = document.getElementById('chartCategories').getContext('2d');
+    new Chart(ctxCategories, {
+        type: 'doughnut',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParCategorie.Select(c => c.Categorie))),
+            datasets: [{
+                data: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParCategorie.Select(c => c.NombreEmprunts))),
+                backgroundColor: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParCategorie.Select(c => c.Couleur ?? "#007bff")))
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+</script>
+}

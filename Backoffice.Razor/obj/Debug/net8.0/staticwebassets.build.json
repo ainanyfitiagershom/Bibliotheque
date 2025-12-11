@@ -1,0 +1,19 @@
+{
+  "Version": 1,
+  "Hash": "j39U75aIKeB1zjmRvFsu/LdaMvqd0McwbYOGmg1ewx8=",
+  "Source": "Backoffice.Razor",
+  "BasePath": "_content/Backoffice.Razor",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "Backoffice.Razor/wwwroot",
+      "Source": "Backoffice.Razor",
+      "ContentRoot": "/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/wwwroot/",
+      "BasePath": "_content/Backoffice.Razor",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
+}
