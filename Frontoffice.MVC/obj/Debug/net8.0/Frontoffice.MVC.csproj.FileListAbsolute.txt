@@ -85,3 +85,4 @@
 /home/tsarajoro/Documents/net/BibliothequeSolution/Frontoffice.MVC/obj/Debug/net8.0/Frontoffice.MVC.pdb
 /home/tsarajoro/Documents/net/BibliothequeSolution/Frontoffice.MVC/obj/Debug/net8.0/Frontoffice.MVC.genruntimeconfig.cache
 /home/tsarajoro/Documents/net/BibliothequeSolution/Frontoffice.MVC/obj/Debug/net8.0/ref/Frontoffice.MVC.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Frontoffice.MVC/obj/Debug/net8.0/Frontoffice.MVC.sourcelink.json

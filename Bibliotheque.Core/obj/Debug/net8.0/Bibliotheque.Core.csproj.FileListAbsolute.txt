@@ -9,3 +9,4 @@
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Core/obj/Debug/net8.0/refint/Bibliotheque.Core.dll
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Core/obj/Debug/net8.0/Bibliotheque.Core.pdb
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Core/obj/Debug/net8.0/ref/Bibliotheque.Core.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Core/obj/Debug/net8.0/Bibliotheque.Core.sourcelink.json

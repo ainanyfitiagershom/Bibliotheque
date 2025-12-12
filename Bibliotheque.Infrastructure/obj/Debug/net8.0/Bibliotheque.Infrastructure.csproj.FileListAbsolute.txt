@@ -15,3 +15,4 @@
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.pdb
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.genruntimeconfig.cache
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/ref/Bibliotheque.Infrastructure.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Infrastructure/obj/Debug/net8.0/Bibliotheque.Infrastructure.sourcelink.json
