@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/wwwroot/css/site.css",
+      "PackagePath": "staticwebassets/css/site.css"
+    },
+    {
+      "Id": "/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/wwwroot/samples/exemple_auteurs.csv",
+      "PackagePath": "staticwebassets/samples/exemple_auteurs.csv"
+    },
+    {
+      "Id": "/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/wwwroot/samples/exemple_categories.csv",
+      "PackagePath": "staticwebassets/samples/exemple_categories.csv"
+    },
+    {
+      "Id": "/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/wwwroot/samples/exemple_livres.csv",
+      "PackagePath": "staticwebassets/samples/exemple_livres.csv"
+    },
+    {
+      "Id": "/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/wwwroot/samples/exemple_utilisateurs.csv",
+      "PackagePath": "staticwebassets/samples/exemple_utilisateurs.csv"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.Backoffice.Razor.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.Backoffice.Razor.props",
+      "PackagePath": "build\\Backoffice.Razor.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.Backoffice.Razor.props",
+      "PackagePath": "buildMultiTargeting\\Backoffice.Razor.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.Backoffice.Razor.props",
+      "PackagePath": "buildTransitive\\Backoffice.Razor.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

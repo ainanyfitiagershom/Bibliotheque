@@ -42,9 +42,7 @@
 
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <span class="welcome-text-elegant d-none d-lg-inline">
-                            <i class="bi bi-heart-fill"></i> Bienvenue, <strong>@User.Identity.Name</strong>
-                        </span>
+                        @await Component.InvokeAsync("UserBadges")
                         <div class="dropdown">
                             <a href="#" class="user-avatar-elegant dropdown-toggle" data-bs-toggle="dropdown">
                                 <span>@User.Identity.Name?.Substring(0, 1).ToUpper()</span>

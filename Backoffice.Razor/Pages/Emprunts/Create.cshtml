@@ -17,26 +17,38 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Utilisateur</label>
-                            <select asp-for="IdUtilisateur" class="form-select" required>
-                                <option value="">-- Sélectionner un utilisateur --</option>
-                                @foreach (var user in Model.Utilisateurs)
-                                {
-                                    <option value="@user.IdUtilisateur">@user.Nom @user.Prenom (@user.NumeroAbonne)</option>
-                                }
-                            </select>
+                            <div class="position-relative">
+                                <input type="text" id="searchUtilisateur" class="form-control" placeholder="Rechercher un utilisateur..." autocomplete="off">
+                                <input type="hidden" asp-for="IdUtilisateur" id="hiddenUtilisateur">
+                                <div id="listUtilisateur" class="dropdown-menu w-100 shadow" style="max-height: 250px; overflow-y: auto;">
+                                    @foreach (var user in Model.Utilisateurs)
+                                    {
+                                        <a href="#" class="dropdown-item user-item" data-id="@user.IdUtilisateur" data-name="@user.Nom @user.Prenom (@user.NumeroAbonne)" data-search="@user.Nom.ToLower() @user.Prenom.ToLower() @user.Email.ToLower() @user.NumeroAbonne.ToLower()">
+                                            <i class="bi bi-person me-2"></i>@user.Nom @user.Prenom <small class="text-muted">(@user.NumeroAbonne)</small>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
                             <span asp-validation-for="IdUtilisateur" class="text-danger"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Livre</label>
-                            <select asp-for="IdLivre" class="form-select" required>
-                                <option value="">-- Sélectionner un livre --</option>
-                                @foreach (var livre in Model.Livres)
-                                {
-                                    <option value="@livre.IdLivre" data-stock="@livre.StockDisponible">
-                                        @livre.Titre (@livre.StockDisponible disponible(s))
-                                    </option>
-                                }
-                            </select>
+                            <div class="position-relative">
+                                <input type="text" id="searchLivre" class="form-control" placeholder="Rechercher un livre..." autocomplete="off">
+                                <input type="hidden" asp-for="IdLivre" id="hiddenLivre">
+                                <div id="listLivre" class="dropdown-menu w-100 shadow" style="max-height: 250px; overflow-y: auto;">
+                                    @foreach (var livre in Model.Livres)
+                                    {
+                                        var badgeClass = livre.StockDisponible >= 3 ? "bg-success" : "bg-warning text-dark";
+                                        <a href="#" class="dropdown-item livre-item" data-id="@livre.IdLivre" data-name="@livre.Titre" data-search="@livre.Titre.ToLower() @livre.ISBN?.ToLower()" data-stock="@livre.StockDisponible">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span><i class="bi bi-book me-2"></i>@livre.Titre</span>
+                                                <span class="badge @badgeClass">@livre.StockDisponible</span>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
                             <span asp-validation-for="IdLivre" class="text-danger"></span>
                         </div>
                     </div>
@@ -97,6 +109,80 @@
                 const emprunt = new Date(this.value);
                 emprunt.setDate(emprunt.getDate() + 21);
                 dateRetour.value = emprunt.toISOString().split('T')[0];
+            });
+
+            // Autocomplétion pour utilisateurs
+            const searchUtilisateur = document.getElementById('searchUtilisateur');
+            const listUtilisateur = document.getElementById('listUtilisateur');
+            const hiddenUtilisateur = document.getElementById('hiddenUtilisateur');
+            const userItems = listUtilisateur.querySelectorAll('.user-item');
+
+            searchUtilisateur.addEventListener('focus', function() {
+                listUtilisateur.classList.add('show');
+            });
+
+            searchUtilisateur.addEventListener('input', function() {
+                const search = this.value.toLowerCase();
+                listUtilisateur.classList.add('show');
+                userItems.forEach(item => {
+                    if (item.dataset.search.includes(search)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            userItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    hiddenUtilisateur.value = this.dataset.id;
+                    searchUtilisateur.value = this.dataset.name;
+                    searchUtilisateur.classList.add('is-valid');
+                    listUtilisateur.classList.remove('show');
+                });
+            });
+
+            // Autocomplétion pour livres
+            const searchLivre = document.getElementById('searchLivre');
+            const listLivre = document.getElementById('listLivre');
+            const hiddenLivre = document.getElementById('hiddenLivre');
+            const livreItems = listLivre.querySelectorAll('.livre-item');
+
+            searchLivre.addEventListener('focus', function() {
+                listLivre.classList.add('show');
+            });
+
+            searchLivre.addEventListener('input', function() {
+                const search = this.value.toLowerCase();
+                listLivre.classList.add('show');
+                livreItems.forEach(item => {
+                    if (item.dataset.search.includes(search)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            livreItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    hiddenLivre.value = this.dataset.id;
+                    searchLivre.value = this.dataset.name;
+                    searchLivre.classList.add('is-valid');
+                    listLivre.classList.remove('show');
+                });
+            });
+
+            // Fermer les listes au clic extérieur
+            document.addEventListener('click', function(e) {
+                if (!searchUtilisateur.contains(e.target) && !listUtilisateur.contains(e.target)) {
+                    listUtilisateur.classList.remove('show');
+                }
+                if (!searchLivre.contains(e.target) && !listLivre.contains(e.target)) {
+                    listLivre.classList.remove('show');
+                }
             });
         });
     </script>

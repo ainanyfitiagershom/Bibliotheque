@@ -120,8 +120,8 @@ namespace Bibliotheque.Core.DTOs
         [Display(Name = "Raison du blocage")]
         public string? RaisonBlocage { get; set; }
 
-        // Propriété calculée pour compatibilité
-        public string Statut => !Actif ? "Inactif" : EstBloque ? "Bloqué" : "Actif";
+        [Display(Name = "Statut")]
+        public string Statut { get; set; } = "Actif";
     }
 
     /// <summary>

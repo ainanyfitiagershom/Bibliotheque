@@ -34,7 +34,8 @@ namespace Backoffice.Razor.Pages.Utilisateurs
                 Adresse = user.Adresse,
                 DateNaissance = user.DateNaissance,
                 Actif = user.Actif,
-                EstBloque = user.EstBloque
+                EstBloque = user.EstBloque,
+                Statut = user.Statut
             };
 
             return Page();
@@ -65,8 +66,23 @@ namespace Backoffice.Razor.Pages.Utilisateurs
             user.Telephone = Input.Telephone;
             user.Adresse = Input.Adresse;
             user.DateNaissance = Input.DateNaissance;
-            user.Actif = Input.Actif;
-            user.EstBloque = Input.EstBloque;
+
+            // Convertir le Statut en Actif/EstBloque
+            switch (Input.Statut)
+            {
+                case "Actif":
+                    user.Actif = true;
+                    user.EstBloque = false;
+                    break;
+                case "Bloque":
+                    user.Actif = true;
+                    user.EstBloque = true;
+                    break;
+                case "Inactif":
+                    user.Actif = false;
+                    user.EstBloque = false;
+                    break;
+            }
 
             // Changer le mot de passe si fourni
             if (!string.IsNullOrEmpty(NouveauMotDePasse))

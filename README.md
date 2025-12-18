@@ -26,6 +26,8 @@ Attendre 20 secondes que SQL Server démarre.
 ### Étape 2 : Créer la base de données (première fois seulement)
 
 ```bash
+# Entrer dans BibliothequeSolution si vous n' etes pas encore là
+cd BibliothequeSolution
 # Copier les scripts SQL dans le container
 docker cp SQLServer/01_CreateDatabase.sql sqlserver:/tmp/
 docker cp SQLServer/02_StoredProcedures.sql sqlserver:/tmp/
@@ -43,8 +45,22 @@ docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0
 
 ```bash
 cd Frontoffice.MVC
+
 dotnet run
+
+#si dotnet : commande introuvable
+export PATH=$PATH:$HOME/.dotnet
+dotnet run
+
+#Si ça ne marche pas, .NET n'est peut-être pas installé. Vérifiez :
+ls ~/.dotnet/dotnet
+
+#Si le fichier n'existe pas, installez .NET
 ```
+
+#Si port, occuper
+dotnet run --urls "https://localhost:7005;http://localhost:7004"
+
 
 ### Étape 4 : Accéder au site
 
@@ -57,16 +73,49 @@ Ouvrir : **https://localhost:7005**
 | Type | Email | Mot de passe |
 |------|-------|--------------|
 | Utilisateur | `jean.dupont@email.com` | `User123!` |
-| Admin | `admin@bibliotheque.fr` | `Admin123!` |
+| Admin | `admin@bibliotheque.com` | `Admin123!` |
 
 ---
+## Connexion backoffice
+```bash
 
+cd /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor && export PATH="$HOME/.dotnet:$PATH" && ~/.dotnet/dotnet run --urls "https://localhost:5002" &
+
+
+
+cd /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor
+
+dotnet run --urls "https://localhost:5002"
+
+#si dotnet : commande introuvable
+export PATH=$PATH:$HOME/.dotnet
+
+dotnet run --urls "https://localhost:5002"
+```
 ## Résolution des Erreurs Courantes
 
 ### Erreur : "Container sqlserver is not running"
 
 ```bash
 docker start sqlserver
+```
+
+## Supprimer et recréer le container
+```bash
+docker stop sqlserver
+docker rm sqlserver
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyStr0ngP@ssw0rd!" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2022-latest
+
+# Attendre 20 secondes puis exécuter les scripts
+docker cp SQLServer/01_CreateDatabase.sql sqlserver:/tmp/
+docker cp SQLServer/02_StoredProcedures.sql sqlserver:/tmp/
+docker cp SQLServer/03_SeedData.sql sqlserver:/tmp/
+docker cp SQLServer/05_sp_RechercherLivres.sql sqlserver:/tmp/
+
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -i /tmp/01_CreateDatabase.sql
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -i /tmp/02_StoredProcedures.sql
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -i /tmp/03_SeedData.sql
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -i /tmp/05_sp_RechercherLivres.sql
 ```
 
 ### Erreur : "Login failed for user 'sa'" (mot de passe incorrect)
@@ -166,6 +215,79 @@ BibliothequeSolution/
   }
 }
 ```
+
+---
+
+## Accès à la Base de Données
+
+### Informations de connexion
+
+| Paramètre | Valeur |
+|-----------|--------|
+| **Serveur** | `localhost` |
+| **Port** | `1433` |
+| **Base de données** | `BibliothequeDB` |
+| **Utilisateur** | `sa` |
+| **Mot de passe** | `MyStr0ngP@ssw0rd!` |
+
+### Via ligne de commande (sqlcmd)
+
+```bash
+# Accéder à SQL Server en mode interactif
+docker exec -it sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C
+
+# Exemples de requêtes une fois connecté :
+USE BibliothequeDB;
+GO
+SELECT * FROM Livres;
+GO
+SELECT * FROM Utilisateurs;
+GO
+SELECT * FROM Notifications;
+GO
+```
+
+### Exécuter une requête directement
+
+```bash
+# Lister tous les livres
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -d BibliothequeDB -Q "SELECT IdLivre, Titre, StockDisponible FROM Livres"
+
+# Lister les utilisateurs
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -d BibliothequeDB -Q "SELECT IdUtilisateur, Nom, Prenom, Email FROM Utilisateurs"
+
+# Lister les notifications
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -d BibliothequeDB -Q "SELECT * FROM Notifications"
+
+# Lister les emprunts en retard
+docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P MyStr0ngP@ssw0rd! -C -d BibliothequeDB -Q "SELECT * FROM Emprunts WHERE Statut = 'EnRetard'"
+```
+
+### Via un outil graphique (Azure Data Studio, DBeaver, etc.)
+
+1. **Télécharger** Azure Data Studio ou DBeaver
+2. **Nouvelle connexion** avec ces paramètres :
+   - Type : Microsoft SQL Server
+   - Serveur : `localhost,1433`
+   - Authentification : SQL Login
+   - Utilisateur : `sa`
+   - Mot de passe : `MyStr0ngP@ssw0rd!`
+   - Base de données : `BibliothequeDB`
+3. Cocher "Trust server certificate" si demandé
+
+### Tables principales
+
+| Table | Description |
+|-------|-------------|
+| `Livres` | Catalogue des livres |
+| `Auteurs` | Liste des auteurs |
+| `Categories` | Catégories de livres |
+| `Utilisateurs` | Comptes utilisateurs |
+| `Admins` | Comptes administrateurs |
+| `Emprunts` | Historique des emprunts |
+| `Reservations` | Réservations en attente |
+| `Notifications` | Notifications utilisateurs |
+| `Avis` | Commentaires sur les livres |
 
 ---
 

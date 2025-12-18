@@ -55,6 +55,10 @@ namespace Backoffice.Razor.Pages.Utilisateurs
             await _unitOfWork.Utilisateurs.AddAsync(utilisateur);
             await _unitOfWork.SaveChangesAsync();
 
+            // Créer une notification de bienvenue
+            await _unitOfWork.Notifications.CreerNotificationBienvenueAsync(utilisateur.IdUtilisateur);
+            await _unitOfWork.SaveChangesAsync();
+
             TempData["Success"] = $"Utilisateur créé avec succès. Numéro d'abonné : {utilisateur.NumeroAbonne}";
             return RedirectToPage("/Utilisateurs/Index");
         }

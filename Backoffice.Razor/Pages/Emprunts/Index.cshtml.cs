@@ -81,7 +81,7 @@ namespace Backoffice.Razor.Pages.Emprunts
             TotalPages = (int)Math.Ceiling(total / (double)PageSize);
 
             Emprunts = query
-                .OrderByDescending(e => e.DateEmprunt)
+                .OrderByDescending(e => e.IdEmprunt)
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
                 .Select(e => new EmpruntViewModel

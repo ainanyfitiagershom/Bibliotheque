@@ -4,70 +4,82 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<!-- Stat Cards -->
 <div class="row g-4 mb-4">
-    <!-- Stat Cards -->
     <div class="col-md-3">
-        <div class="stat-card primary">
-            <div class="stat-value">@Model.Stats.TotalLivres</div>
-            <div class="stat-label"><i class="bi bi-book"></i> Livres</div>
+        <div class="stat-card-elegant rose">
+            <div class="stat-icon-elegant">
+                <i class="bi bi-book"></i>
+            </div>
+            <div class="stat-value-elegant">@Model.Stats.TotalLivres</div>
+            <div class="stat-label-elegant">Livres</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card success">
-            <div class="stat-value">@Model.Stats.TotalUtilisateurs</div>
-            <div class="stat-label"><i class="bi bi-people"></i> Utilisateurs</div>
+        <div class="stat-card-elegant purple">
+            <div class="stat-icon-elegant">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-value-elegant">@Model.Stats.TotalUtilisateurs</div>
+            <div class="stat-label-elegant">Utilisateurs</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card warning">
-            <div class="stat-value">@Model.Stats.EmpruntsEnCours</div>
-            <div class="stat-label"><i class="bi bi-arrow-left-right"></i> Emprunts en cours</div>
+        <div class="stat-card-elegant gold">
+            <div class="stat-icon-elegant">
+                <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <div class="stat-value-elegant">@Model.Stats.EmpruntsEnCours</div>
+            <div class="stat-label-elegant">Emprunts en cours</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card danger">
-            <div class="stat-value">@Model.Stats.EmpruntsEnRetard</div>
-            <div class="stat-label"><i class="bi bi-exclamation-triangle"></i> En retard</div>
+        <div class="stat-card-elegant elegant">
+            <div class="stat-icon-elegant" style="background: rgba(255,255,255,0.2);">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div class="stat-value-elegant">@Model.Stats.EmpruntsEnRetard</div>
+            <div class="stat-label-elegant">En retard</div>
         </div>
     </div>
 </div>
 
+<!-- Statistiques secondaires -->
 <div class="row g-4 mb-4">
-    <!-- Statistiques secondaires -->
     <div class="col-md-2">
-        <div class="card text-center p-3">
-            <h3 class="text-primary mb-0">@Model.Stats.TotalAuteurs</h3>
-            <small class="text-muted">Auteurs</small>
+        <div class="card-elegant text-center p-3">
+            <h3 style="color: var(--rose-accent); margin-bottom: 0;">@Model.Stats.TotalAuteurs</h3>
+            <small style="color: var(--text-muted);">Auteurs</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card text-center p-3">
-            <h3 class="text-info mb-0">@Model.Stats.TotalCategories</h3>
-            <small class="text-muted">Catégories</small>
+        <div class="card-elegant text-center p-3">
+            <h3 style="color: var(--purple-accent); margin-bottom: 0;">@Model.Stats.TotalCategories</h3>
+            <small style="color: var(--text-muted);">Catégories</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card text-center p-3">
-            <h3 class="text-success mb-0">@Model.Stats.TotalExemplaires</h3>
-            <small class="text-muted">Exemplaires</small>
+        <div class="card-elegant text-center p-3">
+            <h3 style="color: #10b981; margin-bottom: 0;">@Model.Stats.TotalExemplaires</h3>
+            <small style="color: var(--text-muted);">Exemplaires</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card text-center p-3">
-            <h3 class="text-warning mb-0">@Model.Stats.ReservationsEnAttente</h3>
-            <small class="text-muted">Réservations</small>
+        <div class="card-elegant text-center p-3">
+            <h3 style="color: var(--gold-accent); margin-bottom: 0;">@Model.Stats.ReservationsEnAttente</h3>
+            <small style="color: var(--text-muted);">Réservations</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card text-center p-3">
-            <h3 class="text-success mb-0">@Model.Stats.EmpruntsAujourdhui</h3>
-            <small class="text-muted">Emprunts aujourd'hui</small>
+        <div class="card-elegant text-center p-3">
+            <h3 style="color: #10b981; margin-bottom: 0;">@Model.Stats.EmpruntsAujourdhui</h3>
+            <small style="color: var(--text-muted);">Emprunts aujourd'hui</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card text-center p-3">
-            <h3 class="text-info mb-0">@Model.Stats.RetoursAujourdhui</h3>
-            <small class="text-muted">Retours aujourd'hui</small>
+        <div class="card-elegant text-center p-3">
+            <h3 style="color: var(--purple-accent); margin-bottom: 0;">@Model.Stats.RetoursAujourdhui</h3>
+            <small style="color: var(--text-muted);">Retours aujourd'hui</small>
         </div>
     </div>
 </div>
@@ -75,11 +87,11 @@
 <div class="row g-4">
     <!-- Graphique Emprunts par mois -->
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
+        <div class="card-elegant">
+            <div class="card-header-elegant">
                 <i class="bi bi-graph-up"></i> Emprunts par mois
             </div>
-            <div class="card-body">
+            <div class="card-body-elegant">
                 <canvas id="chartEmprunts" height="300"></canvas>
             </div>
         </div>
@@ -87,20 +99,20 @@
 
     <!-- Top Livres -->
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card-elegant">
+            <div class="card-header-elegant">
                 <i class="bi bi-trophy"></i> Top 5 Livres
             </div>
-            <div class="card-body p-0">
+            <div class="card-body-elegant p-0">
                 <ul class="list-group list-group-flush">
                     @foreach (var livre in Model.Stats.TopLivres.Take(5))
                     {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="border-color: var(--border-soft);">
                             <div>
-                                <strong>@livre.Titre</strong><br>
-                                <small class="text-muted">@livre.Auteur</small>
+                                <strong style="color: var(--text-dark);">@livre.Titre</strong><br>
+                                <small style="color: var(--text-muted); font-style: italic;">@livre.Auteur</small>
                             </div>
-                            <span class="badge bg-primary rounded-pill">@livre.NombreEmprunts</span>
+                            <span class="badge-elegant badge-info-elegant">@livre.NombreEmprunts</span>
                         </li>
                     }
                 </ul>
@@ -112,11 +124,11 @@
 <div class="row g-4 mt-2">
     <!-- Graphique par catégorie -->
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card-elegant">
+            <div class="card-header-elegant">
                 <i class="bi bi-pie-chart"></i> Emprunts par catégorie
             </div>
-            <div class="card-body">
+            <div class="card-body-elegant">
                 <canvas id="chartCategories" height="250"></canvas>
             </div>
         </div>
@@ -124,27 +136,27 @@
 
     <!-- Indicateurs -->
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card-elegant">
+            <div class="card-header-elegant">
                 <i class="bi bi-speedometer"></i> Indicateurs
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between">
-                        <span>Taux d'occupation</span>
-                        <span>@Model.Stats.TauxOccupation%</span>
+            <div class="card-body-elegant">
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="color: var(--text-medium);">Taux d'occupation</span>
+                        <span style="color: var(--rose-accent); font-weight: 600;">@Model.Stats.TauxOccupation%</span>
                     </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-success" style="width: @Model.Stats.TauxOccupation%"></div>
+                    <div class="progress" style="height: 10px; border-radius: 10px; background: var(--rose-light);">
+                        <div class="progress-bar" style="width: @Model.Stats.TauxOccupation%; background: linear-gradient(90deg, #34d399, #10b981); border-radius: 10px;"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <div class="d-flex justify-content-between">
-                        <span>Taux de retard</span>
-                        <span>@Model.Stats.TauxRetard%</span>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="color: var(--text-medium);">Taux de retard</span>
+                        <span style="color: var(--rose-deep); font-weight: 600;">@Model.Stats.TauxRetard%</span>
                     </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-danger" style="width: @Model.Stats.TauxRetard%"></div>
+                    <div class="progress" style="height: 10px; border-radius: 10px; background: var(--rose-light);">
+                        <div class="progress-bar" style="width: @Model.Stats.TauxRetard%; background: linear-gradient(90deg, #f472b6, #ec4899); border-radius: 10px;"></div>
                     </div>
                 </div>
             </div>
@@ -153,22 +165,22 @@
 
     <!-- Actions rapides -->
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card-elegant">
+            <div class="card-header-elegant">
                 <i class="bi bi-lightning"></i> Actions rapides
             </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="/Livres/Create" class="btn btn-outline-primary">
+            <div class="card-body-elegant">
+                <div class="d-grid gap-3">
+                    <a href="/Livres/Create" class="btn-elegant btn-outline-elegant">
                         <i class="bi bi-plus-lg"></i> Ajouter un livre
                     </a>
-                    <a href="/Emprunts/Create" class="btn btn-outline-success">
+                    <a href="/Emprunts/Create" class="btn-elegant btn-success-elegant">
                         <i class="bi bi-arrow-left-right"></i> Nouvel emprunt
                     </a>
-                    <a href="/Utilisateurs/Create" class="btn btn-outline-info">
+                    <a href="/Utilisateurs/Create" class="btn-elegant btn-primary-elegant">
                         <i class="bi bi-person-plus"></i> Nouvel utilisateur
                     </a>
-                    <a href="/Admin/ImportExport" class="btn btn-outline-secondary">
+                    <a href="/Admin/ImportExport" class="btn-elegant btn-secondary-elegant">
                         <i class="bi bi-file-earmark-arrow-up"></i> Import / Export
                     </a>
                 </div>
@@ -179,6 +191,11 @@
 
 @section Scripts {
 <script>
+    // Couleurs élégantes pour les graphiques
+    const roseAccent = '#ec4899';
+    const purpleAccent = '#a855f7';
+    const roseLight = 'rgba(236, 72, 153, 0.1)';
+
     // Graphique des emprunts par mois
     const ctxEmprunts = document.getElementById('chartEmprunts').getContext('2d');
     new Chart(ctxEmprunts, {
@@ -188,10 +205,14 @@
             datasets: [{
                 label: 'Emprunts',
                 data: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParMois.Select(e => e.NombreEmprunts))),
-                borderColor: '#4dabf7',
-                backgroundColor: 'rgba(77, 171, 247, 0.1)',
+                borderColor: roseAccent,
+                backgroundColor: roseLight,
                 tension: 0.4,
-                fill: true
+                fill: true,
+                pointBackgroundColor: roseAccent,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5
             }]
         },
         options: {
@@ -204,13 +225,22 @@
             },
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(236, 72, 153, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
                 }
             }
         }
     });
 
-    // Graphique par catégorie
+    // Graphique par catégorie avec couleurs élégantes
+    const elegantColors = ['#f472b6', '#c084fc', '#a78bfa', '#d4a574', '#34d399', '#60a5fa', '#f9a8d4', '#d8b4fe'];
     const ctxCategories = document.getElementById('chartCategories').getContext('2d');
     new Chart(ctxCategories, {
         type: 'doughnut',
@@ -218,7 +248,8 @@
             labels: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParCategorie.Select(c => c.Categorie))),
             datasets: [{
                 data: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParCategorie.Select(c => c.NombreEmprunts))),
-                backgroundColor: @Html.Raw(Json.Serialize(Model.Stats.EmpruntsParCategorie.Select(c => c.Couleur ?? "#007bff")))
+                backgroundColor: elegantColors,
+                borderWidth: 0
             }]
         },
         options: {
@@ -226,7 +257,11 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right'
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15
+                    }
                 }
             }
         }

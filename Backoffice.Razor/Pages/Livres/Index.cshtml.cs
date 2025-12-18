@@ -32,7 +32,7 @@ namespace Backoffice.Razor.Pages.Livres
         public bool? Disponible { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string Tri { get; set; } = "Titre";
+        public string Tri { get; set; } = "Recent";
 
         [BindProperty(SupportsGet = true)]
         public int Page { get; set; } = 1;

@@ -53,7 +53,7 @@ namespace Backoffice.Razor.Pages.Utilisateurs
             TotalPages = (int)Math.Ceiling(total / (double)PageSize);
 
             Utilisateurs = query
-                .OrderByDescending(u => u.DateInscription)
+                .OrderByDescending(u => u.IdUtilisateur)
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
                 .Select(u => new UtilisateurViewModel

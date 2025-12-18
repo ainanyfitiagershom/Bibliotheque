@@ -26,12 +26,12 @@ namespace Frontoffice.MVC.Controllers
         public async Task<IActionResult> Prolonger(int id)
         {
             var userId = GetUserId();
-            var success = await _empruntService.ProlongerEmpruntAsync(id, userId);
+            var (success, errorMessage) = await _empruntService.ProlongerEmpruntAsync(id, userId);
 
             if (success)
-                TempData["Success"] = "Emprunt prolongé avec succès.";
+                TempData["Success"] = "Emprunt prolongé de 7 jours avec succès.";
             else
-                TempData["Error"] = "Impossible de prolonger cet emprunt.";
+                TempData["Error"] = errorMessage ?? "Impossible de prolonger cet emprunt.";
 
             return RedirectToAction(nameof(Index));
         }

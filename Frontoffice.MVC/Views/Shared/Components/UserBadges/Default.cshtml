@@ -1,0 +1,18 @@
+@model Frontoffice.MVC.ViewComponents.UserBadgesViewModel
+
+<div class="user-badges-elegant d-flex align-items-center gap-2">
+    <a href="/Reservations" class="badge-link-elegant" title="Mes réservations">
+        <i class="bi bi-bookmark-heart"></i>
+        @if (Model.ReservationsCount > 0)
+        {
+            <span class="badge-count-elegant">@Model.ReservationsCount</span>
+        }
+    </a>
+    <a href="/Compte/Notifications" class="badge-link-elegant" title="Notifications">
+        <i class="bi bi-bell"></i>
+        @if (Model.NotificationsCount > 0)
+        {
+            <span class="badge-count-elegant notification">@Model.NotificationsCount</span>
+        }
+    </a>
+</div>

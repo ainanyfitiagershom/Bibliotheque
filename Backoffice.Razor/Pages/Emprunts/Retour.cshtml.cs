@@ -74,10 +74,11 @@ namespace Backoffice.Razor.Pages.Emprunts
                 var notification = new Notification
                 {
                     IdUtilisateur = prochainerReservation.IdUtilisateur,
-                    Type = "ReservationDisponible",
+                    Type = "Disponibilite",
+                    Titre = "Livre disponible",
                     Message = $"Le livre \"{livre?.Titre}\" est maintenant disponible. Vous avez 3 jours pour venir le chercher.",
                     DateCreation = DateTime.Now,
-                    Lu = false
+                    EstLue = false
                 };
                 await _unitOfWork.Notifications.AddAsync(notification);
             }

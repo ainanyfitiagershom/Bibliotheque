@@ -23,7 +23,7 @@ namespace Backoffice.Razor.Pages.Categories
 
             Categories = categories
                 .Where(c => c.Actif)
-                .OrderBy(c => c.Nom)
+                .OrderByDescending(c => c.IdCategorie)
                 .Select(c => new CategorieViewModel
                 {
                     IdCategorie = c.IdCategorie,

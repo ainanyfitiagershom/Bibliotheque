@@ -175,16 +175,20 @@ namespace Bibliotheque.Infrastructure.Repositories
         {
             var dateDebut = DateTime.Now.AddMonths(-nombreMois);
 
-            return await _dbSet
+            var data = await _dbSet
                 .Where(e => e.DateEmprunt >= dateDebut)
                 .GroupBy(e => new { e.DateEmprunt.Year, e.DateEmprunt.Month })
+                .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
+                .ToListAsync();
+
+            return data
                 .Select(g => new EmpruntParMoisDTO
                 {
-                    Mois = $"{g.Key.Year}-{g.Key.Month:D2}",
-                    NombreEmprunts = g.Count()
+                    Mois = $"{g.Year}-{g.Month:D2}",
+                    NombreEmprunts = g.Count
                 })
                 .OrderBy(x => x.Mois)
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<IEnumerable<EmpruntParCategorieDTO>> GetStatistiquesParCategorieAsync()

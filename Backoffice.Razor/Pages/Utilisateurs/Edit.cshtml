@@ -56,9 +56,9 @@
                         <div class="col-md-6 mb-3">
                             <label asp-for="Input.Statut" class="form-label"></label>
                             <select asp-for="Input.Statut" class="form-select">
-                                <option value="Actif">Actif</option>
-                                <option value="Bloque">Bloqué</option>
-                                <option value="Inactif">Inactif</option>
+                                <option value="Actif" selected="@(Model.Input.Statut == "Actif")">Actif</option>
+                                <option value="Bloque" selected="@(Model.Input.Statut == "Bloque")">Bloqué</option>
+                                <option value="Inactif" selected="@(Model.Input.Statut == "Inactif")">Inactif</option>
                             </select>
                         </div>
                     </div>

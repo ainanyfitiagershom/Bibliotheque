@@ -55,6 +55,7 @@ CREATE TABLE dbo.Utilisateurs (
     Email NVARCHAR(255) NOT NULL UNIQUE,
     Telephone NVARCHAR(20) NULL,
     Adresse NVARCHAR(500) NULL,
+    DateNaissance DATE NULL,
     MotDePasseHash NVARCHAR(255) NOT NULL,
     DateInscription DATETIME2 DEFAULT GETDATE(),
     DerniereConnexion DATETIME2 NULL,

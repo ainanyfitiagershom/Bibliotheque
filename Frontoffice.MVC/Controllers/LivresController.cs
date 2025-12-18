@@ -1,6 +1,7 @@
 using Frontoffice.MVC.Models;
 using Frontoffice.MVC.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Frontoffice.MVC.Controllers
 {
@@ -42,6 +43,16 @@ namespace Frontoffice.MVC.Controllers
                 Livre = livre,
                 PositionFileAttente = await _reservationService.GetPositionFileAttenteAsync(id)
             };
+
+            // Vérifier si l'utilisateur connecté a déjà réservé ce livre
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                if (userId > 0)
+                {
+                    viewModel.DejaReserve = await _reservationService.ADejaReserveAsync(id, userId);
+                }
+            }
 
             return View(viewModel);
         }

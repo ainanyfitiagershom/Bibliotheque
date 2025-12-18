@@ -78,17 +78,31 @@
                 {
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <form asp-controller="Reservations" asp-action="Reserver" method="post">
-                            <input type="hidden" name="livreId" value="@Model.Livre.IdLivre" />
-                            <button type="submit" class="btn-elegant btn-secondary-elegant w-100">
-                                <i class="bi bi-bookmark-heart"></i>
-                                Réserver ce livre
-                            </button>
-                        </form>
-                        <p class="availability-note-elegant">
-                            <i class="bi bi-bell"></i>
-                            Vous serez notifiée lorsque le livre sera disponible.
-                        </p>
+                        @if (Model.DejaReserve)
+                        {
+                            <div class="alert alert-info-elegant">
+                                <i class="bi bi-bookmark-check-fill"></i>
+                                Vous avez déjà réservé ce livre
+                            </div>
+                            <p class="availability-note-elegant">
+                                <i class="bi bi-bell"></i>
+                                Vous serez notifié(e) lorsque le livre sera disponible.
+                            </p>
+                        }
+                        else
+                        {
+                            <form asp-controller="Reservations" asp-action="Reserver" method="post">
+                                <input type="hidden" name="livreId" value="@Model.Livre.IdLivre" />
+                                <button type="submit" class="btn-elegant btn-secondary-elegant w-100">
+                                    <i class="bi bi-bookmark-heart"></i>
+                                    Réserver ce livre
+                                </button>
+                            </form>
+                            <p class="availability-note-elegant">
+                                <i class="bi bi-bell"></i>
+                                Vous serez notifié(e) lorsque le livre sera disponible.
+                            </p>
+                        }
                     }
                     else
                     {

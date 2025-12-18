@@ -24,15 +24,8 @@ namespace Backoffice.Razor.Pages.ImportExport
             _unitOfWork = unitOfWork;
         }
 
-        public List<ImportRecord> ImportHistory { get; set; } = new();
-
         public void OnGet()
         {
-            // Charger l'historique depuis TempData ou session
-            if (TempData["ImportHistory"] is string historyJson)
-            {
-                ImportHistory = System.Text.Json.JsonSerializer.Deserialize<List<ImportRecord>>(historyJson) ?? new();
-            }
         }
 
         public async Task<IActionResult> OnPostImportAsync(string type, IFormFile file)
@@ -42,13 +35,6 @@ namespace Backoffice.Razor.Pages.ImportExport
                 TempData["Error"] = "Veuillez sélectionner un fichier.";
                 return RedirectToPage();
             }
-
-            var importRecord = new ImportRecord
-            {
-                Date = DateTime.Now,
-                Type = type,
-                Filename = file.FileName
-            };
 
             try
             {
@@ -61,36 +47,35 @@ namespace Backoffice.Razor.Pages.ImportExport
                 using var csv = new CsvReader(reader, config);
 
                 int count = 0;
+                int updated = 0;
 
                 switch (type)
                 {
                     case "livres":
-                        count = await ImportLivresAsync(csv);
+                        (count, updated) = await ImportLivresAsync(csv);
                         break;
                     case "auteurs":
-                        count = await ImportAuteursAsync(csv);
+                        (count, updated) = await ImportAuteursAsync(csv);
                         break;
                     case "categories":
-                        count = await ImportCategoriesAsync(csv);
+                        (count, updated) = await ImportCategoriesAsync(csv);
                         break;
                     case "utilisateurs":
-                        count = await ImportUtilisateursAsync(csv);
+                        (count, updated) = await ImportUtilisateursAsync(csv);
                         break;
                 }
 
-                importRecord.Success = true;
-                importRecord.Count = count;
-                TempData["Success"] = $"{count} enregistrement(s) importé(s) avec succès.";
+                var message = new List<string>();
+                if (count > 0) message.Add($"{count} créé(s)");
+                if (updated > 0) message.Add($"{updated} mis à jour");
+                TempData["Success"] = message.Count > 0
+                    ? $"Import réussi : {string.Join(", ", message)}."
+                    : "Aucun enregistrement à importer.";
             }
             catch (Exception ex)
             {
-                importRecord.Success = false;
                 TempData["Error"] = $"Erreur lors de l'import : {ex.Message}";
             }
-
-            // Sauvegarder l'historique
-            var history = new List<ImportRecord> { importRecord };
-            TempData["ImportHistory"] = System.Text.Json.JsonSerializer.Serialize(history);
 
             return RedirectToPage();
         }
@@ -183,118 +168,282 @@ namespace Backoffice.Razor.Pages.ImportExport
             return File(stream.ToArray(), "application/pdf", $"rapport_{type}_{DateTime.Now:yyyyMMdd}.pdf");
         }
 
-        private async Task<int> ImportLivresAsync(CsvReader csv)
+        private async Task<(int created, int updated)> ImportLivresAsync(CsvReader csv)
         {
             var records = csv.GetRecords<dynamic>().ToList();
             int count = 0;
+            int updated = 0;
+
+            // Charger tous les auteurs et livres existants
+            var auteurs = (await _unitOfWork.Auteurs.GetAllAsync()).ToList();
+            var livresExistants = (await _unitOfWork.Livres.GetAllAsync()).ToList();
 
             foreach (var record in records)
             {
-                int idAuteur = 1;
                 int? annee = null;
                 int stock = 1;
 
-                int.TryParse(record.IdAuteur?.ToString(), out idAuteur);
                 if (int.TryParse(record.Annee?.ToString(), out int anneeValue))
                 {
                     annee = anneeValue;
                 }
                 int.TryParse(record.Stock?.ToString(), out stock);
 
-                var livre = new Livre
-                {
-                    ISBN = record.ISBN,
-                    Titre = record.Titre,
-                    IdAuteur = idAuteur,
-                    Annee = annee,
-                    Editeur = record.Editeur,
-                    Stock = stock,
-                    StockDisponible = stock,
-                    Description = record.Description,
-                    DateAjout = DateTime.Now,
-                    Actif = true
-                };
+                // Chercher l'auteur par ID ou par nom
+                int idAuteur;
+                string auteurValue = record.Auteur?.ToString() ?? record.IdAuteur?.ToString() ?? "";
 
-                await _unitOfWork.Livres.AddAsync(livre);
-                count++;
+                if (int.TryParse(auteurValue, out int auteurId))
+                {
+                    // C'est un ID, vérifier s'il existe
+                    var auteurExistant = auteurs.FirstOrDefault(a => a.IdAuteur == auteurId);
+                    if (auteurExistant != null)
+                    {
+                        idAuteur = auteurId;
+                    }
+                    else
+                    {
+                        // Créer un auteur "Inconnu" avec cet ID n'est pas possible, créer un nouvel auteur
+                        var nouvelAuteur = new Auteur
+                        {
+                            Nom = $"Auteur #{auteurId}",
+                            Prenom = "",
+                            Actif = true
+                        };
+                        await _unitOfWork.Auteurs.AddAsync(nouvelAuteur);
+                        await _unitOfWork.SaveChangesAsync();
+                        auteurs.Add(nouvelAuteur);
+                        idAuteur = nouvelAuteur.IdAuteur;
+                    }
+                }
+                else
+                {
+                    // C'est un nom, chercher ou créer l'auteur
+                    var auteurExistant = auteurs.FirstOrDefault(a =>
+                        a.NomComplet.Equals(auteurValue, StringComparison.OrdinalIgnoreCase) ||
+                        a.Nom.Equals(auteurValue, StringComparison.OrdinalIgnoreCase));
+
+                    if (auteurExistant != null)
+                    {
+                        idAuteur = auteurExistant.IdAuteur;
+                    }
+                    else
+                    {
+                        // Créer un nouvel auteur avec ce nom
+                        var parts = auteurValue.Split(' ', 2);
+                        var nouvelAuteur = new Auteur
+                        {
+                            Nom = parts.Length > 1 ? parts[1] : parts[0],
+                            Prenom = parts.Length > 1 ? parts[0] : "",
+                            Actif = true
+                        };
+                        await _unitOfWork.Auteurs.AddAsync(nouvelAuteur);
+                        await _unitOfWork.SaveChangesAsync();
+                        auteurs.Add(nouvelAuteur);
+                        idAuteur = nouvelAuteur.IdAuteur;
+                    }
+                }
+
+                // Vérifier si un livre avec cet ISBN existe déjà
+                string isbn = record.ISBN?.ToString() ?? "";
+                var livreExistant = !string.IsNullOrEmpty(isbn)
+                    ? livresExistants.FirstOrDefault(l => l.ISBN == isbn)
+                    : null;
+
+                if (livreExistant != null)
+                {
+                    // Mettre à jour le livre existant
+                    livreExistant.Titre = record.Titre;
+                    livreExistant.IdAuteur = idAuteur;
+                    livreExistant.Annee = annee;
+                    livreExistant.Editeur = record.Editeur;
+                    livreExistant.Stock = stock;
+                    livreExistant.Description = record.Description;
+                    livreExistant.DateModification = DateTime.Now;
+
+                    await _unitOfWork.Livres.UpdateAsync(livreExistant);
+                    updated++;
+                }
+                else
+                {
+                    // Créer un nouveau livre
+                    var livre = new Livre
+                    {
+                        ISBN = isbn,
+                        Titre = record.Titre,
+                        IdAuteur = idAuteur,
+                        Annee = annee,
+                        Editeur = record.Editeur,
+                        Stock = stock,
+                        StockDisponible = stock,
+                        Description = record.Description,
+                        DateAjout = DateTime.Now,
+                        Actif = true
+                    };
+
+                    await _unitOfWork.Livres.AddAsync(livre);
+                    count++;
+                }
             }
 
             await _unitOfWork.SaveChangesAsync();
-            return count;
+
+            return (count, updated);
         }
 
-        private async Task<int> ImportAuteursAsync(CsvReader csv)
+        private async Task<(int created, int updated)> ImportAuteursAsync(CsvReader csv)
         {
             var records = csv.GetRecords<dynamic>().ToList();
             int count = 0;
+            int updated = 0;
+
+            var auteursExistants = (await _unitOfWork.Auteurs.GetAllAsync()).ToList();
 
             foreach (var record in records)
             {
-                var auteur = new Auteur
-                {
-                    Nom = record.Nom,
-                    Prenom = record.Prenom,
-                    Nationalite = record.Nationalite,
-                    DateNaissance = DateTime.TryParse(record.DateNaissance?.ToString(), out DateTime date) ? date : null,
-                    Actif = true
-                };
+                string nom = record.Nom?.ToString() ?? "";
+                string prenom = record.Prenom?.ToString() ?? "";
 
-                await _unitOfWork.Auteurs.AddAsync(auteur);
-                count++;
+                // Vérifier si l'auteur existe déjà (par nom + prénom)
+                var auteurExistant = auteursExistants.FirstOrDefault(a =>
+                    a.Nom.Equals(nom, StringComparison.OrdinalIgnoreCase) &&
+                    (a.Prenom ?? "").Equals(prenom, StringComparison.OrdinalIgnoreCase));
+
+                if (auteurExistant != null)
+                {
+                    // Mettre à jour
+                    auteurExistant.Nationalite = record.Nationalite;
+                    auteurExistant.DateNaissance = DateTime.TryParse(record.DateNaissance?.ToString(), out DateTime dateN) ? dateN : null;
+                    auteurExistant.DateDeces = DateTime.TryParse(record.DateDeces?.ToString(), out DateTime dateD) ? dateD : null;
+                    auteurExistant.Biographie = record.Biographie;
+
+                    await _unitOfWork.Auteurs.UpdateAsync(auteurExistant);
+                    updated++;
+                }
+                else
+                {
+                    var auteur = new Auteur
+                    {
+                        Nom = nom,
+                        Prenom = prenom,
+                        Nationalite = record.Nationalite,
+                        DateNaissance = DateTime.TryParse(record.DateNaissance?.ToString(), out DateTime date) ? date : null,
+                        DateDeces = DateTime.TryParse(record.DateDeces?.ToString(), out DateTime dateD) ? dateD : null,
+                        Biographie = record.Biographie,
+                        Actif = true
+                    };
+
+                    await _unitOfWork.Auteurs.AddAsync(auteur);
+                    auteursExistants.Add(auteur);
+                    count++;
+                }
             }
 
             await _unitOfWork.SaveChangesAsync();
-            return count;
+            return (count, updated);
         }
 
-        private async Task<int> ImportCategoriesAsync(CsvReader csv)
+        private async Task<(int created, int updated)> ImportCategoriesAsync(CsvReader csv)
         {
             var records = csv.GetRecords<dynamic>().ToList();
             int count = 0;
+            int updated = 0;
+
+            var categoriesExistantes = (await _unitOfWork.Categories.GetAllAsync()).ToList();
 
             foreach (var record in records)
             {
-                var categorie = new Categorie
-                {
-                    Nom = record.Nom,
-                    Description = record.Description,
-                    Couleur = record.Couleur ?? "#6c757d",
-                    Actif = true
-                };
+                string nom = record.Nom?.ToString() ?? "";
 
-                await _unitOfWork.Categories.AddAsync(categorie);
-                count++;
+                // Vérifier si la catégorie existe déjà (par nom)
+                var categorieExistante = categoriesExistantes.FirstOrDefault(c =>
+                    c.Nom.Equals(nom, StringComparison.OrdinalIgnoreCase));
+
+                if (categorieExistante != null)
+                {
+                    // Mettre à jour
+                    categorieExistante.Description = record.Description;
+                    categorieExistante.Couleur = record.Couleur ?? categorieExistante.Couleur;
+                    categorieExistante.Icone = record.Icone ?? categorieExistante.Icone;
+
+                    await _unitOfWork.Categories.UpdateAsync(categorieExistante);
+                    updated++;
+                }
+                else
+                {
+                    var categorie = new Categorie
+                    {
+                        Nom = nom,
+                        Description = record.Description,
+                        Couleur = record.Couleur ?? "#6c757d",
+                        Icone = record.Icone ?? "bi-book",
+                        Actif = true
+                    };
+
+                    await _unitOfWork.Categories.AddAsync(categorie);
+                    categoriesExistantes.Add(categorie);
+                    count++;
+                }
             }
 
             await _unitOfWork.SaveChangesAsync();
-            return count;
+            return (count, updated);
         }
 
-        private async Task<int> ImportUtilisateursAsync(CsvReader csv)
+        private async Task<(int created, int updated)> ImportUtilisateursAsync(CsvReader csv)
         {
             var records = csv.GetRecords<dynamic>().ToList();
             int count = 0;
+            int updated = 0;
+
+            var utilisateursExistants = (await _unitOfWork.Utilisateurs.GetAllAsync()).ToList();
 
             foreach (var record in records)
             {
-                var user = new Utilisateur
-                {
-                    Nom = record.Nom,
-                    Prenom = record.Prenom,
-                    Email = record.Email,
-                    Telephone = record.Telephone,
-                    MotDePasseHash = BCrypt.Net.BCrypt.HashPassword("password123"),
-                    DateInscription = DateTime.Now,
-                    Actif = true,
-                    EstBloque = false
-                };
+                string email = record.Email?.ToString() ?? "";
 
-                await _unitOfWork.Utilisateurs.AddAsync(user);
-                count++;
+                // Vérifier si l'utilisateur existe déjà (par email)
+                var userExistant = utilisateursExistants.FirstOrDefault(u =>
+                    u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+
+                if (userExistant != null)
+                {
+                    // Mettre à jour (sauf mot de passe)
+                    userExistant.Nom = record.Nom;
+                    userExistant.Prenom = record.Prenom;
+                    userExistant.Telephone = record.Telephone;
+                    userExistant.Adresse = record.Adresse;
+                    userExistant.DateNaissance = DateTime.TryParse(record.DateNaissance?.ToString(), out DateTime dateN) ? dateN : null;
+
+                    await _unitOfWork.Utilisateurs.UpdateAsync(userExistant);
+                    updated++;
+                }
+                else
+                {
+                    string motDePasse = record.MotDePasse?.ToString() ?? "password123";
+
+                    var user = new Utilisateur
+                    {
+                        Nom = record.Nom,
+                        Prenom = record.Prenom,
+                        Email = email,
+                        Telephone = record.Telephone,
+                        Adresse = record.Adresse,
+                        DateNaissance = DateTime.TryParse(record.DateNaissance?.ToString(), out DateTime dateN) ? dateN : null,
+                        MotDePasseHash = BCrypt.Net.BCrypt.HashPassword(motDePasse),
+                        DateInscription = DateTime.Now,
+                        Actif = true,
+                        EstBloque = false
+                    };
+
+                    await _unitOfWork.Utilisateurs.AddAsync(user);
+                    utilisateursExistants.Add(user);
+                    count++;
+                }
             }
 
             await _unitOfWork.SaveChangesAsync();
-            return count;
+            return (count, updated);
         }
 
         private async Task GenerateLivresPdfAsync(Document document)
@@ -370,15 +519,6 @@ namespace Backoffice.Razor.Pages.ImportExport
             statsTable.AddCell(emprunts.Count(e => e.DateEmprunt.Month == DateTime.Now.Month && e.DateEmprunt.Year == DateTime.Now.Year).ToString());
 
             document.Add(statsTable);
-        }
-
-        public class ImportRecord
-        {
-            public DateTime Date { get; set; }
-            public string Type { get; set; } = string.Empty;
-            public string Filename { get; set; } = string.Empty;
-            public bool Success { get; set; }
-            public int Count { get; set; }
         }
     }
 }

@@ -10,8 +10,8 @@ GO
 -- Hash BCrypt de "Admin123!" - À générer via l'application
 -- ============================================================
 INSERT INTO Admins (Nom, Prenom, Email, MotDePasseHash) VALUES
-('Dupont', 'Jean', 'admin@bibliotheque.com', '$2a$11$rBNdBKCZPI.nhxkVb/VXaOhZp7XgVpL9PGpLXK.YptPqXqKqXqKqK'),
-('Martin', 'Sophie', 'sophie.martin@bibliotheque.com', '$2a$11$rBNdBKCZPI.nhxkVb/VXaOhZp7XgVpL9PGpLXK.YptPqXqKqXqKqK');
+('Dupont', 'Jean', 'admin@bibliotheque.com', '$2a$11$VhPGF5fJUEzrdXFMhYv1fO2jUU2u5AkRGh.ykNlTlwggizJLSUb4u'),
+('Martin', 'Sophie', 'sophie.martin@bibliotheque.com', '$2a$11$VhPGF5fJUEzrdXFMhYv1fO2jUU2u5AkRGh.ykNlTlwggizJLSUb4u');
 GO
 
 -- ============================================================

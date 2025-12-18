@@ -88,3 +88,4 @@
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Api/obj/Debug/net8.0/Bibliotheque.Api.pdb
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Api/obj/Debug/net8.0/Bibliotheque.Api.genruntimeconfig.cache
 /home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Api/obj/Debug/net8.0/ref/Bibliotheque.Api.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Bibliotheque.Api/obj/Debug/net8.0/Bibliotheque.Api.sourcelink.json

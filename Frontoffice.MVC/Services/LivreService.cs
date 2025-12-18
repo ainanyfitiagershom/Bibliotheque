@@ -150,7 +150,14 @@ namespace Frontoffice.MVC.Services
 
             while (await reader.ReadAsync())
             {
-                livres.Add(MapLivreDTO(reader));
+                // Mapping spécifique pour sp_GetRecommandations qui retourne moins de colonnes
+                livres.Add(new LivreDTO
+                {
+                    IdLivre = reader.GetInt32(reader.GetOrdinal("IdLivre")),
+                    Titre = reader.GetString(reader.GetOrdinal("Titre")),
+                    ImageCouverture = reader.IsDBNull(reader.GetOrdinal("ImageCouverture")) ? null : reader.GetString(reader.GetOrdinal("ImageCouverture")),
+                    NomAuteur = reader.IsDBNull(reader.GetOrdinal("Auteur")) ? null : reader.GetString(reader.GetOrdinal("Auteur"))
+                });
             }
 
             return livres;

@@ -17,7 +17,7 @@ namespace Frontoffice.MVC.Services
     {
         Task<List<EmpruntDTO>> GetEmpruntsUtilisateurAsync(int userId);
         Task<List<EmpruntDTO>> GetHistoriqueUtilisateurAsync(int userId);
-        Task<bool> ProlongerEmpruntAsync(int empruntId, int userId);
+        Task<(bool Success, string? ErrorMessage)> ProlongerEmpruntAsync(int empruntId, int userId);
         Task<int> GetNombreEmpruntsEnCoursAsync(int userId);
     }
 
@@ -37,6 +37,7 @@ namespace Frontoffice.MVC.Services
         Task<bool> ReserverAsync(int livreId, int userId);
         Task<bool> AnnulerReservationAsync(int reservationId, int userId);
         Task<int> GetPositionFileAttenteAsync(int livreId);
+        Task<bool> ADejaReserveAsync(int livreId, int userId);
     }
 
     public interface INotificationService

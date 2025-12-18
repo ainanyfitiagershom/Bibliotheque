@@ -81,15 +81,24 @@ namespace Frontoffice.MVC.Services
             if ((int)await checkEmpruntCmd.ExecuteScalarAsync() > 0)
                 return false;
 
-            // Créer la réservation
+            // Calculer la position dans la file d'attente
+            var positionCmd = new SqlCommand(
+                "SELECT COUNT(*) + 1 FROM Reservations WHERE IdLivre = @LivreId AND Statut = 'EnAttente'",
+                connection);
+            positionCmd.Parameters.AddWithValue("@LivreId", livreId);
+            var position = (int)await positionCmd.ExecuteScalarAsync();
+
+            // Créer la réservation avec la position
             var sql = @"
-                INSERT INTO Reservations (IdLivre, IdUtilisateur, DateReservation, Statut)
-                VALUES (@LivreId, @UserId, @DateReservation, 'EnAttente')";
+                INSERT INTO Reservations (IdLivre, IdUtilisateur, DateReservation, DateExpiration, PositionFile, Statut)
+                VALUES (@LivreId, @UserId, @DateReservation, @DateExpiration, @PositionFile, 'EnAttente')";
 
             using var cmd = new SqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@LivreId", livreId);
             cmd.Parameters.AddWithValue("@UserId", userId);
             cmd.Parameters.AddWithValue("@DateReservation", DateTime.Now);
+            cmd.Parameters.AddWithValue("@DateExpiration", DateTime.Now.AddDays(30));
+            cmd.Parameters.AddWithValue("@PositionFile", position);
 
             var result = await cmd.ExecuteNonQueryAsync();
             return result > 0;
@@ -123,6 +132,19 @@ namespace Frontoffice.MVC.Services
             cmd.Parameters.AddWithValue("@LivreId", livreId);
 
             return (int)await cmd.ExecuteScalarAsync();
+        }
+
+        public async Task<bool> ADejaReserveAsync(int livreId, int userId)
+        {
+            using var connection = _context.CreateConnection();
+            await connection.OpenAsync();
+
+            var sql = "SELECT COUNT(*) FROM Reservations WHERE IdLivre = @LivreId AND IdUtilisateur = @UserId AND Statut IN ('EnAttente', 'Disponible')";
+            using var cmd = new SqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@LivreId", livreId);
+            cmd.Parameters.AddWithValue("@UserId", userId);
+
+            return (int)await cmd.ExecuteScalarAsync() > 0;
         }
     }
 }

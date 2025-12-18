@@ -5,209 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Backoffice Bibliothèque</title>
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom Elegant CSS -->
+    <link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        :root {
-            --sidebar-width: 250px;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: var(--sidebar-width);
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-            padding-top: 0;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .sidebar .brand {
-            padding: 1.5rem;
-            color: white;
-            font-size: 1.25rem;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            border-left: 3px solid #4dabf7;
-        }
-
-        .sidebar .nav-link i {
-            width: 20px;
-        }
-
-        .sidebar .nav-section {
-            padding: 1rem 1.5rem 0.5rem;
-            color: rgba(255,255,255,0.5);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
-
-        .top-navbar {
-            background: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .content-wrapper {
-            padding: 2rem;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .card-header {
-            background: white;
-            border-bottom: 1px solid #eee;
-            font-weight: 600;
-        }
-
-        .stat-card {
-            padding: 1.5rem;
-            border-radius: 10px;
-            color: white;
-        }
-
-        .stat-card.primary { background: linear-gradient(135deg, #4dabf7, #228be6); }
-        .stat-card.success { background: linear-gradient(135deg, #69db7c, #40c057); }
-        .stat-card.warning { background: linear-gradient(135deg, #ffd43b, #fab005); }
-        .stat-card.danger { background: linear-gradient(135deg, #ff8787, #fa5252); }
-
-        .stat-card .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .stat-card .stat-label {
-            opacity: 0.9;
-        }
-
-        .table th {
-            font-weight: 600;
-            background: #f8f9fa;
-        }
-
-        .btn-action {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .badge-statut {
-            padding: 0.35rem 0.65rem;
-            font-weight: 500;
-        }
-
-        .avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
 </head>
 <body>
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="brand">
+        <!-- Sidebar Elegant -->
+        <nav class="sidebar-elegant">
+            <a href="/Index" class="sidebar-brand-elegant">
                 <i class="bi bi-book-half"></i>
-                Bibliothèque
+                <span>Bibliothèque</span>
+            </a>
+
+            <div class="sidebar-section-elegant">Principal</div>
+            <div class="sidebar-nav-elegant">
+                <a class="sidebar-link-elegant @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/Index">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
             </div>
 
-            <div class="nav-section">Principal</div>
-            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/Index">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
+            <div class="sidebar-section-elegant">Gestion</div>
+            <div class="sidebar-nav-elegant">
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Livres") ? "active" : "")" href="/Livres/Index">
+                    <i class="bi bi-book"></i>
+                    <span>Livres</span>
+                </a>
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Auteurs") ? "active" : "")" href="/Auteurs/Index">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Auteurs</span>
+                </a>
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Categories") ? "active" : "")" href="/Categories/Index">
+                    <i class="bi bi-tags"></i>
+                    <span>Catégories</span>
+                </a>
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Utilisateurs") ? "active" : "")" href="/Utilisateurs/Index">
+                    <i class="bi bi-people"></i>
+                    <span>Utilisateurs</span>
+                </a>
+            </div>
 
-            <div class="nav-section">Gestion</div>
-            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Livres") ? "active" : "")" href="/Livres/Index">
-                <i class="bi bi-book"></i> Livres
-            </a>
-            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Auteurs") ? "active" : "")" href="/Auteurs/Index">
-                <i class="bi bi-person-badge"></i> Auteurs
-            </a>
-            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Categories") ? "active" : "")" href="/Categories/Index">
-                <i class="bi bi-tags"></i> Catégories
-            </a>
-            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Utilisateurs") ? "active" : "")" href="/Utilisateurs/Index">
-                <i class="bi bi-people"></i> Utilisateurs
-            </a>
+            <div class="sidebar-section-elegant">Transactions</div>
+            <div class="sidebar-nav-elegant">
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Emprunts") ? "active" : "")" href="/Emprunts/Index">
+                    <i class="bi bi-arrow-left-right"></i>
+                    <span>Emprunts</span>
+                </a>
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Reservations") ? "active" : "")" href="/Reservations/Index">
+                    <i class="bi bi-bookmark-star"></i>
+                    <span>Réservations</span>
+                </a>
+            </div>
 
-            <div class="nav-section">Transactions</div>
-            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Emprunts") ? "active" : "")" href="/Emprunts/Index">
-                <i class="bi bi-arrow-left-right"></i> Emprunts
-            </a>
-
-            <div class="nav-section">Outils</div>
-            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Statistiques") ? "active" : "")" href="/Statistiques/Index">
-                <i class="bi bi-graph-up"></i> Statistiques
-            </a>
-            <a class="nav-link" href="/Admin/ImportExport">
-                <i class="bi bi-file-earmark-arrow-up"></i> Import / Export
-            </a>
+            <div class="sidebar-section-elegant">Outils</div>
+            <div class="sidebar-nav-elegant">
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/ImportExport") ? "active" : "")" href="/ImportExport/Index">
+                    <i class="bi bi-file-earmark-arrow-up"></i>
+                    <span>Import / Export</span>
+                </a>
+                <a class="sidebar-link-elegant @(Context.Request.Path.StartsWithSegments("/Notifications") ? "active" : "")" href="/Notifications/Index">
+                    <i class="bi bi-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </div>
         </nav>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content-elegant">
             <!-- Top Navbar -->
-            <div class="top-navbar">
-                <div>
-                    <h5 class="mb-0">@ViewData["Title"]</h5>
-                </div>
-                <div class="d-flex align-items-center gap-3">
-                    <a href="/Notifications/Index" class="btn btn-light position-relative">
-                        <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                        </span>
-                    </a>
-                    <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <div class="top-navbar-elegant">
+                <h5 class="page-title-elegant">@ViewData["Title"]</h5>
+                <div class="navbar-actions-elegant">
+                    @await Component.InvokeAsync("NotificationBadge")
+                    <div class="dropdown user-dropdown-elegant">
+                        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i> @User.Identity?.Name
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -226,14 +106,16 @@
             </div>
 
             <!-- Page Content -->
-            <div class="content-wrapper">
+            <div class="content-wrapper-elegant">
                 @RenderBody()
             </div>
         </div>
     }
     else
     {
-        @RenderBody()
+        <div class="login-page-elegant">
+            @RenderBody()
+        </div>
     }
 
     <!-- Bootstrap JS -->

@@ -85,3 +85,4 @@
 /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/obj/Debug/net8.0/Backoffice.Razor.pdb
 /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/obj/Debug/net8.0/Backoffice.Razor.genruntimeconfig.cache
 /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/obj/Debug/net8.0/ref/Backoffice.Razor.dll
+/home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor/obj/Debug/net8.0/Backoffice.Razor.sourcelink.json

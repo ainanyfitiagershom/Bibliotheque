@@ -37,9 +37,10 @@ namespace Frontoffice.MVC.Services
                     IdNotification = reader.GetInt32(reader.GetOrdinal("IdNotification")),
                     IdUtilisateur = reader.GetInt32(reader.GetOrdinal("IdUtilisateur")),
                     Type = reader.GetString(reader.GetOrdinal("Type")),
+                    Titre = reader.IsDBNull(reader.GetOrdinal("Titre")) ? "" : reader.GetString(reader.GetOrdinal("Titre")),
                     Message = reader.GetString(reader.GetOrdinal("Message")),
                     DateCreation = reader.GetDateTime(reader.GetOrdinal("DateCreation")),
-                    Lu = reader.GetBoolean(reader.GetOrdinal("Lu"))
+                    EstLue = reader.GetBoolean(reader.GetOrdinal("EstLue"))
                 });
             }
 
@@ -51,7 +52,7 @@ namespace Frontoffice.MVC.Services
             using var connection = _context.CreateConnection();
             await connection.OpenAsync();
 
-            var sql = "SELECT COUNT(*) FROM Notifications WHERE IdUtilisateur = @UserId AND Lu = 0";
+            var sql = "SELECT COUNT(*) FROM Notifications WHERE IdUtilisateur = @UserId AND EstLue = 0";
             using var cmd = new SqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@UserId", userId);
 
@@ -63,7 +64,7 @@ namespace Frontoffice.MVC.Services
             using var connection = _context.CreateConnection();
             await connection.OpenAsync();
 
-            var sql = "UPDATE Notifications SET Lu = 1 WHERE IdNotification = @Id AND IdUtilisateur = @UserId";
+            var sql = "UPDATE Notifications SET EstLue = 1, DateLecture = GETDATE() WHERE IdNotification = @Id AND IdUtilisateur = @UserId";
             using var cmd = new SqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@Id", notificationId);
             cmd.Parameters.AddWithValue("@UserId", userId);
@@ -76,7 +77,7 @@ namespace Frontoffice.MVC.Services
             using var connection = _context.CreateConnection();
             await connection.OpenAsync();
 
-            var sql = "UPDATE Notifications SET Lu = 1 WHERE IdUtilisateur = @UserId AND Lu = 0";
+            var sql = "UPDATE Notifications SET EstLue = 1, DateLecture = GETDATE() WHERE IdUtilisateur = @UserId AND EstLue = 0";
             using var cmd = new SqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@UserId", userId);
 

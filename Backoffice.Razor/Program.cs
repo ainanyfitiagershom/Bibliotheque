@@ -1,3 +1,4 @@
+using Backoffice.Razor.Services;
 using Bibliotheque.Core.Interfaces;
 using Bibliotheque.Infrastructure.Data;
 using Bibliotheque.Infrastructure.Repositories;
@@ -18,6 +19,10 @@ builder.Services.AddScoped<IEmpruntService, EmpruntService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IStatistiquesService, StatistiquesService>();
 builder.Services.AddScoped<IImportExportService, ImportExportService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Background Service pour les notifications automatiques
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
 // Razor Pages
 builder.Services.AddRazorPages();

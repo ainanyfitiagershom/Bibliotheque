@@ -26,6 +26,8 @@ namespace Frontoffice.MVC.Models
         public LivreDTO Livre { get; set; } = new();
         public int PositionFileAttente { get; set; }
         public List<Avis> Avis { get; set; } = new();
+        public bool DejaReserve { get; set; }
+        public bool DejaEmprunte { get; set; }
     }
 
     public class LoginViewModel
