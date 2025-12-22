@@ -116,13 +116,14 @@
                         </td>
                         <td>@livre.AuteurNom</td>
                         <td>
-                            @foreach (var cat in livre.Categories.Take(2))
+                            @foreach (var cat in (livre.Categories ?? new List<CategorieSimpleDTO>()).Take(2))
                             {
-                                <span class="badge bg-secondary me-1">@cat</span>
+                                <span class="badge bg-secondary me-1">@cat.Nom</span>
                             }
-                            @if (livre.Categories.Count > 2)
+
+                            @if ((livre.Categories?.Count ?? 0) > 2)
                             {
-                                <span class="badge bg-light text-dark">+@(livre.Categories.Count - 2)</span>
+                                <span class="badge bg-light text-dark">+@((livre.Categories!.Count) - 2)</span>
                             }
                         </td>
                         <td>@livre.Annee</td>
