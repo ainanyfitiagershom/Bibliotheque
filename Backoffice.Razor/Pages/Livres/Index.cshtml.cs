@@ -35,7 +35,7 @@ namespace Backoffice.Razor.Pages.Livres
         public string Tri { get; set; } = "Recent";
 
         [BindProperty(SupportsGet = true)]
-        public int Page { get; set; } = 1;
+        public int CurrentPage { get; set; } = 1;
 
         public async Task OnGetAsync()
         {
@@ -50,7 +50,7 @@ namespace Backoffice.Razor.Pages.Livres
                 IdCategorie = IdCategorie,
                 Disponible = Disponible,
                 Tri = Tri,
-                Page = Page,
+                Page = CurrentPage,
                 TaillePage = 15
             };
 

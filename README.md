@@ -82,15 +82,23 @@ Ouvrir : **https://localhost:7005**
 cd /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor && export PATH="$HOME/.dotnet:$PATH" && ~/.dotnet/dotnet run --urls "https://localhost:5002" &
 
 
+cd Backoffice.Razor
 
-cd /home/tsarajoro/Documents/net/BibliothequeSolution/Backoffice.Razor
-
-dotnet run --urls "https://localhost:5002"
+dotnet run --urls "http://localhost:5002"
 
 #si dotnet : commande introuvable
 export PATH=$PATH:$HOME/.dotnet
 
-dotnet run --urls "https://localhost:5002"
+
+dotnet run --urls "http://localhost:5002"
+```
+
+## Build backoffice à la racine puis run
+```bash
+export PATH=$PATH:$HOME/.dotnet
+dotnet build Backoffice.Razor
+
+dotnet run --urls "http://localhost:5002" --project Backoffice.Razor
 ```
 ## Résolution des Erreurs Courantes
 

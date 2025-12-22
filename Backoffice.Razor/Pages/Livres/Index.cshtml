@@ -166,19 +166,19 @@
 {
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
-            <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
-                <a class="page-link" href="?page=@(Model.Page - 1)&recherche=@Model.Recherche&idCategorie=@Model.IdCategorie&disponible=@Model.Disponible&tri=@Model.Tri">
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?currentPage=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(Model.Recherche) ? "" : $"&recherche={Uri.EscapeDataString(Model.Recherche)}")@(Model.IdCategorie.HasValue ? $"&idCategorie={Model.IdCategorie}" : "")@(Model.Disponible.HasValue ? $"&disponible={Model.Disponible.ToString()?.ToLower()}" : "")@(string.IsNullOrEmpty(Model.Tri) ? "" : $"&tri={Model.Tri}")">
                     <i class="bi bi-chevron-left"></i>
                 </a>
             </li>
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
-                <li class="page-item @(i == Model.Page ? "active" : "")">
-                    <a class="page-link" href="?page=@i&recherche=@Model.Recherche&idCategorie=@Model.IdCategorie&disponible=@Model.Disponible&tri=@Model.Tri">@i</a>
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?currentPage=@i@(string.IsNullOrEmpty(Model.Recherche) ? "" : $"&recherche={Uri.EscapeDataString(Model.Recherche)}")@(Model.IdCategorie.HasValue ? $"&idCategorie={Model.IdCategorie}" : "")@(Model.Disponible.HasValue ? $"&disponible={Model.Disponible.ToString()?.ToLower()}" : "")@(string.IsNullOrEmpty(Model.Tri) ? "" : $"&tri={Model.Tri}")">@i</a>
                 </li>
             }
-            <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" href="?page=@(Model.Page + 1)&recherche=@Model.Recherche&idCategorie=@Model.IdCategorie&disponible=@Model.Disponible&tri=@Model.Tri">
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?currentPage=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(Model.Recherche) ? "" : $"&recherche={Uri.EscapeDataString(Model.Recherche)}")@(Model.IdCategorie.HasValue ? $"&idCategorie={Model.IdCategorie}" : "")@(Model.Disponible.HasValue ? $"&disponible={Model.Disponible.ToString()?.ToLower()}" : "")@(string.IsNullOrEmpty(Model.Tri) ? "" : $"&tri={Model.Tri}")">
                     <i class="bi bi-chevron-right"></i>
                 </a>
             </li>

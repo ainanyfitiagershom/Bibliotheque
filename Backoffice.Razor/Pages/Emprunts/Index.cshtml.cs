@@ -1,5 +1,6 @@
 using Bibliotheque.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Backoffice.Razor.Pages.Emprunts
@@ -16,11 +17,22 @@ namespace Backoffice.Razor.Pages.Emprunts
         }
 
         public List<EmpruntViewModel> Emprunts { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
+
         public int TotalPages { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Search { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Statut { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public DateTime? DateDebut { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public DateTime? DateFin { get; set; }
 
         // Statistiques
@@ -29,14 +41,8 @@ namespace Backoffice.Razor.Pages.Emprunts
         public int TotalTermines { get; set; }
         public int TotalAujourdhui { get; set; }
 
-        public async Task OnGetAsync(int page = 1, string? search = null, string? statut = null,
-            DateTime? dateDebut = null, DateTime? dateFin = null)
+        public async Task OnGetAsync()
         {
-            CurrentPage = page;
-            Search = search;
-            Statut = statut;
-            DateDebut = dateDebut;
-            DateFin = dateFin;
 
             var allEmprunts = await _unitOfWork.Emprunts.GetAllWithDetailsAsync();
             var livres = await _unitOfWork.Livres.GetAllAsync();
@@ -52,29 +58,29 @@ namespace Backoffice.Razor.Pages.Emprunts
 
             var query = allEmprunts.AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(Search))
             {
-                search = search.ToLower();
-                var livreIds = livres.Where(l => l.Titre.ToLower().Contains(search)).Select(l => l.IdLivre);
-                var userIds = users.Where(u => u.Nom.ToLower().Contains(search) ||
-                    u.Prenom.ToLower().Contains(search)).Select(u => u.IdUtilisateur);
+                var searchLower = Search.ToLower();
+                var livreIds = livres.Where(l => l.Titre.ToLower().Contains(searchLower)).Select(l => l.IdLivre);
+                var userIds = users.Where(u => u.Nom.ToLower().Contains(searchLower) ||
+                    u.Prenom.ToLower().Contains(searchLower)).Select(u => u.IdUtilisateur);
 
                 query = query.Where(e => livreIds.Contains(e.IdLivre) || userIds.Contains(e.IdUtilisateur));
             }
 
-            if (!string.IsNullOrEmpty(statut))
+            if (!string.IsNullOrEmpty(Statut))
             {
-                query = query.Where(e => e.Statut == statut);
+                query = query.Where(e => e.Statut == Statut);
             }
 
-            if (dateDebut.HasValue)
+            if (DateDebut.HasValue)
             {
-                query = query.Where(e => e.DateEmprunt.Date >= dateDebut.Value.Date);
+                query = query.Where(e => e.DateEmprunt.Date >= DateDebut.Value.Date);
             }
 
-            if (dateFin.HasValue)
+            if (DateFin.HasValue)
             {
-                query = query.Where(e => e.DateEmprunt.Date <= dateFin.Value.Date);
+                query = query.Where(e => e.DateEmprunt.Date <= DateFin.Value.Date);
             }
 
             var total = query.Count();
@@ -82,7 +88,7 @@ namespace Backoffice.Razor.Pages.Emprunts
 
             Emprunts = query
                 .OrderByDescending(e => e.IdEmprunt)
-                .Skip((page - 1) * PageSize)
+                .Skip((CurrentPage - 1) * PageSize)
                 .Take(PageSize)
                 .Select(e => new EmpruntViewModel
                 {

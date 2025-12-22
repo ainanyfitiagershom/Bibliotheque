@@ -17,36 +17,40 @@ namespace Backoffice.Razor.Pages.Utilisateurs
         }
 
         public List<UtilisateurViewModel> Utilisateurs { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
+
         public int TotalPages { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Search { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Statut { get; set; }
 
-        public async Task OnGetAsync(int page = 1, string? search = null, string? statut = null)
+        public async Task OnGetAsync()
         {
-            CurrentPage = page;
-            Search = search;
-            Statut = statut;
 
             var allUsers = await _unitOfWork.Utilisateurs.GetAllAsync();
             var emprunts = await _unitOfWork.Emprunts.GetAllAsync();
 
             var query = allUsers.AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(Search))
             {
-                search = search.ToLower();
+                var searchLower = Search.ToLower();
                 query = query.Where(u =>
-                    u.Nom.ToLower().Contains(search) ||
-                    u.Prenom.ToLower().Contains(search) ||
-                    u.Email.ToLower().Contains(search) ||
-                    (u.Telephone != null && u.Telephone.Contains(search)) ||
-                    (u.NumeroAbonne != null && u.NumeroAbonne.ToLower().Contains(search)));
+                    u.Nom.ToLower().Contains(searchLower) ||
+                    u.Prenom.ToLower().Contains(searchLower) ||
+                    u.Email.ToLower().Contains(searchLower) ||
+                    (u.Telephone != null && u.Telephone.Contains(searchLower)) ||
+                    (u.NumeroAbonne != null && u.NumeroAbonne.ToLower().Contains(searchLower)));
             }
 
-            if (!string.IsNullOrEmpty(statut))
+            if (!string.IsNullOrEmpty(Statut))
             {
-                query = query.Where(u => u.Statut == statut);
+                query = query.Where(u => u.Statut == Statut);
             }
 
             var total = query.Count();
@@ -54,7 +58,7 @@ namespace Backoffice.Razor.Pages.Utilisateurs
 
             Utilisateurs = query
                 .OrderByDescending(u => u.IdUtilisateur)
-                .Skip((page - 1) * PageSize)
+                .Skip((CurrentPage - 1) * PageSize)
                 .Take(PageSize)
                 .Select(u => new UtilisateurViewModel
                 {

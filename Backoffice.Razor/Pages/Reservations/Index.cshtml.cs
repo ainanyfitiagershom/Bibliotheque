@@ -10,6 +10,7 @@ namespace Backoffice.Razor.Pages.Reservations
     public class IndexModel : PageModel
     {
         private readonly IUnitOfWork _unitOfWork;
+        private const int PageSize = 15;
 
         public IndexModel(IUnitOfWork unitOfWork)
         {
@@ -17,18 +18,25 @@ namespace Backoffice.Razor.Pages.Reservations
         }
 
         public List<ReservationViewModel> Reservations { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
         public string? Statut { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Search { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int CurrentPage { get; set; } = 1;
+
+        public int TotalPages { get; set; }
 
         // Statistiques
         public int TotalEnAttente { get; set; }
         public int TotalDisponible { get; set; }
         public int TotalExpirees { get; set; }
 
-        public async Task OnGetAsync(string? statut = null, string? search = null)
+        public async Task OnGetAsync()
         {
-            Statut = statut;
-            Search = search;
 
             var allReservations = await _unitOfWork.Reservations.GetAllAsync();
             var livres = await _unitOfWork.Livres.GetAllAsync();
@@ -43,18 +51,18 @@ namespace Backoffice.Razor.Pages.Reservations
                 .Where(r => r.Statut == "EnAttente" || r.Statut == "Disponible")
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(statut))
+            if (!string.IsNullOrEmpty(Statut))
             {
-                query = query.Where(r => r.Statut == statut);
+                query = query.Where(r => r.Statut == Statut);
             }
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(Search))
             {
-                search = search.ToLower();
-                var livreIds = livres.Where(l => l.Titre.ToLower().Contains(search)).Select(l => l.IdLivre);
-                var userIds = users.Where(u => u.Nom.ToLower().Contains(search) ||
-                    u.Prenom.ToLower().Contains(search) ||
-                    u.Email.ToLower().Contains(search)).Select(u => u.IdUtilisateur);
+                var searchLower = Search.ToLower();
+                var livreIds = livres.Where(l => l.Titre.ToLower().Contains(searchLower)).Select(l => l.IdLivre);
+                var userIds = users.Where(u => u.Nom.ToLower().Contains(searchLower) ||
+                    u.Prenom.ToLower().Contains(searchLower) ||
+                    u.Email.ToLower().Contains(searchLower)).Select(u => u.IdUtilisateur);
 
                 query = query.Where(r => livreIds.Contains(r.IdLivre) || userIds.Contains(r.IdUtilisateur));
             }
@@ -62,10 +70,17 @@ namespace Backoffice.Razor.Pages.Reservations
             var livresList = livres.ToList();
             var usersList = users.ToList();
 
-            Reservations = query
+            var orderedQuery = query
                 .OrderBy(r => r.Statut == "Disponible" ? 0 : 1)
                 .ThenBy(r => r.DateReservation)
-                .ToList()
+                .ToList();
+
+            var total = orderedQuery.Count;
+            TotalPages = (int)Math.Ceiling(total / (double)PageSize);
+
+            Reservations = orderedQuery
+                .Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize)
                 .Select(r =>
                 {
                     var livre = livresList.FirstOrDefault(l => l.IdLivre == r.IdLivre);

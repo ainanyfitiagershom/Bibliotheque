@@ -20,9 +20,16 @@ namespace Backoffice.Razor.Pages.Notifications
         }
 
         public List<NotificationViewModel> Notifications { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
+
         public int TotalPages { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? TypeFiltre { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Search { get; set; }
 
         // Statistiques
@@ -32,11 +39,8 @@ namespace Backoffice.Razor.Pages.Notifications
         public int TotalRappel { get; set; }
         public int TotalNonLues { get; set; }
 
-        public async Task OnGetAsync(int page = 1, string? type = null, string? search = null)
+        public async Task OnGetAsync()
         {
-            CurrentPage = page;
-            TypeFiltre = type;
-            Search = search;
 
             var allNotifications = await _unitOfWork.Notifications.GetAllAsync();
             var users = await _unitOfWork.Utilisateurs.GetAllAsync();
@@ -51,24 +55,24 @@ namespace Backoffice.Razor.Pages.Notifications
             var query = allNotifications.AsQueryable();
 
             // Filtre par type
-            if (!string.IsNullOrEmpty(type))
+            if (!string.IsNullOrEmpty(TypeFiltre))
             {
-                query = query.Where(n => n.Type == type);
+                query = query.Where(n => n.Type == TypeFiltre);
             }
 
             // Recherche
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(Search))
             {
-                search = search.ToLower();
+                var searchLower = Search.ToLower();
                 var userIds = users.Where(u =>
-                    u.Nom.ToLower().Contains(search) ||
-                    u.Prenom.ToLower().Contains(search) ||
-                    u.Email.ToLower().Contains(search))
+                    u.Nom.ToLower().Contains(searchLower) ||
+                    u.Prenom.ToLower().Contains(searchLower) ||
+                    u.Email.ToLower().Contains(searchLower))
                     .Select(u => u.IdUtilisateur);
 
                 query = query.Where(n =>
-                    n.Titre.ToLower().Contains(search) ||
-                    n.Message.ToLower().Contains(search) ||
+                    n.Titre.ToLower().Contains(searchLower) ||
+                    n.Message.ToLower().Contains(searchLower) ||
                     userIds.Contains(n.IdUtilisateur));
             }
 
@@ -77,7 +81,7 @@ namespace Backoffice.Razor.Pages.Notifications
 
             var notifList = query
                 .OrderByDescending(n => n.IdNotification)
-                .Skip((page - 1) * PageSize)
+                .Skip((CurrentPage - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
 
