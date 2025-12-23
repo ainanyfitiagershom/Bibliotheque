@@ -18,6 +18,11 @@ namespace Bibliotheque.Core.Interfaces
         Task<IEnumerable<Auteur>> RechercherAsync(string terme);
 
         /// <summary>
+        /// Obtenir tous les auteurs avec leurs livres
+        /// </summary>
+        Task<IEnumerable<Auteur>> GetAllWithLivresAsync();
+
+        /// <summary>
         /// Obtenir les auteurs les plus populaires (ayant le plus de livres empruntés)
         /// </summary>
         Task<IEnumerable<Auteur>> GetPopulairesAsync(int nombre = 10);

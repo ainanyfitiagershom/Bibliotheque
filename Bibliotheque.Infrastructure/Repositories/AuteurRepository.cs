@@ -22,11 +22,20 @@ namespace Bibliotheque.Infrastructure.Repositories
         {
             var termeNormalise = terme.ToLower();
             return await _dbSet
+                .Include(a => a.Livres.Where(l => l.Actif))
                 .Where(a => a.Actif &&
                     (a.Nom.ToLower().Contains(termeNormalise) ||
                      (a.Prenom != null && a.Prenom.ToLower().Contains(termeNormalise))))
                 .OrderBy(a => a.Nom)
                 .ThenBy(a => a.Prenom)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Auteur>> GetAllWithLivresAsync()
+        {
+            return await _dbSet
+                .Include(a => a.Livres.Where(l => l.Actif))
+                .Where(a => a.Actif)
                 .ToListAsync();
         }
 

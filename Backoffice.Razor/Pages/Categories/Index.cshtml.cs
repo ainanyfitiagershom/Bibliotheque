@@ -18,11 +18,9 @@ namespace Backoffice.Razor.Pages.Categories
 
         public async Task OnGetAsync()
         {
-            var categories = await _unitOfWork.Categories.GetAllAsync();
-            var livres = await _unitOfWork.Livres.GetAllAsync();
+            var categories = await _unitOfWork.Categories.GetAllWithCountAsync();
 
             Categories = categories
-                .Where(c => c.Actif)
                 .OrderByDescending(c => c.IdCategorie)
                 .Select(c => new CategorieViewModel
                 {
@@ -30,7 +28,7 @@ namespace Backoffice.Razor.Pages.Categories
                     Nom = c.Nom,
                     Description = c.Description,
                     Couleur = c.Couleur ?? "#6c757d",
-                    NombreLivres = c.LivreCategories?.Count ?? 0
+                    NombreLivres = c.LivreCategories?.Count(lc => lc.Livre != null && lc.Livre.Actif) ?? 0
                 })
                 .ToList();
         }

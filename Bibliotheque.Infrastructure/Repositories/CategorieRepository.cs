@@ -24,6 +24,7 @@ namespace Bibliotheque.Infrastructure.Repositories
         {
             return await _dbSet
                 .Include(c => c.LivreCategories)
+                    .ThenInclude(lc => lc.Livre)
                 .Where(c => c.Actif)
                 .OrderBy(c => c.Nom)
                 .ToListAsync();

@@ -37,7 +37,7 @@ namespace Backoffice.Razor.Pages.Auteurs
             }
             else
             {
-                auteurs = await _unitOfWork.Auteurs.GetAllAsync();
+                auteurs = await _unitOfWork.Auteurs.GetAllWithLivresAsync();
             }
 
             var query = auteurs.Where(a => a.Actif).OrderByDescending(a => a.IdAuteur);
